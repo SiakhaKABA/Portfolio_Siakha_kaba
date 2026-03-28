@@ -248,3 +248,56 @@ input:focus, textarea:focus {
     margin-top: 3px;
     margin-left: 7px;
 }
+
+/* Title */
+.project-tittle-details h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+}
+
+/* Sections */
+.section {
+    margin-top: 25px;
+}
+
+.section h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: white;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Description */
+.section p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+.tech-list {
+    margin-top: 7px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 7px;
+}
+
+.tech-list span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color:rgb(239, 8, 131);
+}
