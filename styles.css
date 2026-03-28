@@ -1,0 +1,12 @@
+/* Variables de couleurs */
+:root {
+    --bg-color: #060a13;
+    --card-bg: #1e293b;
+    --text-color: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --danger-color: #ef4444;
+    --border-color: #334155;
+}
+
