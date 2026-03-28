@@ -10,3 +10,9 @@
     --border-color: #334155;
 }
 
+/* RESET CSS (Réinitialisation de base)*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
