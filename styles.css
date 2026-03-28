@@ -31,3 +31,15 @@ body {
     max-width: 800px;
     margin: 0 auto;
 }
+/* Le header*/
+
+header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+h1 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+}
