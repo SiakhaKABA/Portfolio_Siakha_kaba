@@ -130,3 +130,66 @@ input:focus, textarea:focus {
 .btn:hover {
     opacity: 0.8;
 }
+
+/* Tags de technologies (Aperçu) */
+.tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.tag {
+    background-color: var(--primary-color);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+/* --- Styles spécifiques à la liste des projets (MIS À JOUR) --- */
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 13px;
+    margin-top: 30px;
+}
+
+.project-item {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden; 
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.project-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(38, 16, 16, 0.4);
+    border-color: var(--primary-color);
+}
+
+.project-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover; 
+    display: block;
+}
+
+.project-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.project-link {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+}
+
+.project-link:hover {
+    color: var(--primary-color);
+}
