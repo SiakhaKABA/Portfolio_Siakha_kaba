@@ -343,3 +343,151 @@ i {
     color: var(--text-muted);
     text-decoration: none;
 }
+
+
+/*####################################################*/
+/* organisation de l'entéte*/
+.navbar {
+	display : flex;
+	justify-content : space-between;
+	padding : 15px 30px;
+	border-bottom : 1px solid #1e293b;
+	background : rgba(10, 15 40, 0.9);
+}
+
+.logo {
+	font-weight : bold;
+	font-size : 25px;
+	color : #38bdf8; 
+}
+.nav-action a {
+	margin-right: 15px;
+	color: #94a3b8;
+	text-decoration: none;
+}
+.nav-action button {
+	padding: 8px 15px;
+}
+
+.containes {
+	width: 600px;
+	margin: 40px auto;
+	padding : 25px;
+	background : #020617;
+}
+
+/* Container */
+.containerform {
+	width: 600px;
+	margin: 40px auto;
+	padding : 25px;
+	border-radius : 20px;
+	background : rgba(10, 15, 40, 0.9);
+	border : 1px solid rgba(0, 140, 255, 0.2);
+}
+
+/* Bouton retour */
+.back {
+	display: block;
+	margin-bottom: 15px;
+	color: #94a3b8;
+	text-decoration: none;
+}
+
+/* Titre */
+h1 {
+	font-size: 28px;
+	margin-bottom: 5px;
+	color : #FFFFFF;
+}
+
+.subtitle {
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+/* Card */
+.card {
+    background: ;
+    border: 3px solid #060a13;
+    padding: 25px;
+    border-radius: 20px;
+}
+
+/* Formulaire */
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+	color : #FFFFFF;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    background: #020617;
+    border: 1px solid #1e293b;
+    color: white;
+    border-radius: 15px;
+}
+
+textarea {
+    height: 100px;
+}
+
+/* compteur */
+.counter {
+    float: right;
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* technologies */
+.tech-input {
+    display: flex;
+    gap: 10px;
+}
+
+.tech-input input {
+    flex: 1;
+}
+
+.tech-input button {
+    padding: 10px;
+}
+
+/* boutons */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.btnim {
+    background: white;
+    border: none;
+    color: black;
+    padding: 12px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+
+}
+.btn-ajout {
+    background: #3b82f6;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.btn-annul {
+    background: white;
+    border: none;
+    color: black;
+    padding: 10px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+
+}
+
