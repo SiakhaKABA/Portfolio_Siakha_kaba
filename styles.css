@@ -193,3 +193,58 @@ input:focus, textarea:focus {
 .project-link:hover {
     color: var(--primary-color);
 }
+
+/* Conteneur pour aligner les deux boutons */
+.project-actions {
+    display: flex;
+    gap: 10px; /* Espace entre les deux boutons */
+    margin-top: 15px;
+    margin-left: 7px;
+    margin-right: 7px;
+    margin-bottom: 7px;
+}
+
+/* Style commun pour les boutons d'action dans la liste */
+.btn-details, .btn-delete {
+    flex: 1; /* Pour qu'ils aient la même largeur */
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-details {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-details:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-delete {
+    background-color: transparent;
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+}
+
+.btn-delete:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    color: var(--text-muted);
+}
+
+.project-tittle{
+    margin-top: 3px;
+    margin-left: 7px;
+}
