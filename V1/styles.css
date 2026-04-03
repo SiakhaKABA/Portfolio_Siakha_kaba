@@ -1,0 +1,493 @@
+/* Variables de couleurs */
+:root {
+    --bg-color: #060a13;
+    --card-bg: #1e293b;
+    --text-color: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --danger-color: #ef4444;
+    --border-color: #334155;
+}
+
+/* RESET CSS (Réinitialisation de base)*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* STYLE GLOBAL DU BODY */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Conteneur principal centré */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+/* Le header*/
+
+header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+h1 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+}
+
+/* Formulaire */
+.form-card {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+}
+
+.form-group {
+    margin-bottom: 20px;
+    border-radius: 50px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: white;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.help-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+/* Boutons */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    flex: 2;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    flex: 1;
+}
+
+.btn-add-tech {
+    background-color: var(--border-color);
+    color: white;
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* Tags de technologies (Aperçu) */
+.tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.tag {
+    background-color: var(--primary-color);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+/* --- Styles spécifiques à la liste des projets (MIS À JOUR) --- */
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 13px;
+    margin-top: 30px;
+}
+
+.project-item {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden; 
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.project-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(38, 16, 16, 0.4);
+    border-color: var(--primary-color);
+}
+
+.project-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover; 
+    display: block;
+}
+
+.project-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.project-link {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+}
+
+.project-link:hover {
+    color: var(--primary-color);
+}
+
+/* Conteneur pour aligner les deux boutons */
+.project-actions {
+    display: flex;
+    gap: 10px; /* Espace entre les deux boutons */
+    margin-top: 15px;
+    margin-left: 7px;
+    margin-right: 7px;
+    margin-bottom: 7px;
+}
+
+/* Style commun pour les boutons d'action dans la liste */
+.btn-details, .btn-delete {
+    flex: 1; /* Pour qu'ils aient la même largeur */
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-details {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-details:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-delete {
+    background-color: transparent;
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+}
+
+.btn-delete:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    color: var(--text-muted);
+}
+
+.project-tittle{
+    margin-top: 3px;
+    margin-left: 7px;
+}
+
+/* Title */
+.project-tittle-details h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+}
+
+/* Sections */
+.section {
+    margin-top: 25px;
+}
+
+.section h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: white;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Description */
+.section p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+.tech-list {
+    margin-top: 7px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 7px;
+}
+
+.tech-list span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color:rgb(239, 8, 131);
+}
+
+/* Icons */
+i {
+        color:rgb(239, 8, 131);
+}
+
+.project-item-first {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 20px;
+}
+
+.project-item-first img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.project-tittle-details {
+    padding: 20px 20px 0 20px;
+}
+
+.section {
+    padding: 0 20px;
+}
+
+.project-grid-first {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.btn-retour{
+    text-align: right;
+    color: var(--text-muted);
+    text-decoration: none;
+}
+
+
+/*####################################################*/
+/* organisation de l'entéte*/
+.navbar {
+	display : flex;
+	justify-content : space-between;
+	padding : 15px 30px;
+	border-bottom : 1px solid #1e293b;
+	background : rgba(10, 15 40, 0.9);
+}
+
+.logo {
+	font-weight : bold;
+	font-size : 25px;
+	color : #38bdf8; 
+}
+.nav-action a {
+	margin-right: 15px;
+	color: #94a3b8;
+	text-decoration: none;
+}
+.nav-action button {
+	padding: 8px 15px;
+}
+
+.containes {
+	width: 600px;
+	margin: 40px auto;
+	padding : 25px;
+	background : #020617;
+}
+
+/* Container */
+.containerform {
+	width: 600px;
+	margin: 40px auto;
+	padding : 25px;
+	border-radius : 20px;
+	background : rgba(10, 15, 40, 0.9);
+	border : 1px solid rgba(0, 140, 255, 0.2);
+}
+
+/* Bouton retour */
+.back {
+	display: block;
+	margin-bottom: 15px;
+	color: #94a3b8;
+	text-decoration: none;
+}
+
+/* Titre */
+h1 {
+	font-size: 28px;
+	margin-bottom: 5px;
+	color : #FFFFFF;
+}
+
+.subtitle {
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+/* Card */
+.card {
+    background: ;
+    border: 3px solid #060a13;
+    padding: 25px;
+    border-radius: 20px;
+}
+
+/* Formulaire */
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+	color : #FFFFFF;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    background: #020617;
+    border: 1px solid #1e293b;
+    color: white;
+    border-radius: 15px;
+}
+
+textarea {
+    height: 100px;
+}
+
+/* compteur */
+.counter {
+    float: right;
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* technologies */
+.tech-input {
+    display: flex;
+    gap: 10px;
+}
+
+.tech-input input {
+    flex: 1;
+}
+
+.tech-input button {
+    padding: 10px;
+}
+
+/* boutons */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.btnim {
+    background: white;
+    border: none;
+    color: black;
+    padding: 12px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+
+}
+.btn-ajout {
+    background: #3b82f6;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.btn-annul {
+    background: white;
+    border: none;
+    color: black;
+    padding: 10px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+
+}
+
