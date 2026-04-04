@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes Projets — Portfolio</title>
+  <link rel="stylesheet" href="./src/output.css" />
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">fullstack<span>_portfolio</span></a>
+      <div class="flex items-center gap-5">
+        <a href="index.html" class="nav-link">Accueil</a>
+        <a href="ajouter-projet.html" class="btn-primary">
+          <i class="fas fa-plus"></i>+ Ajouter
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto px-6 py-12">
+
+    <!-- Header -->
+    <div class="fade-up" style="margin-bottom:2.5rem;">
+      <div class="section-header">
+        <span class="section-label">// PROJETS</span>
+        <div class="section-line"></div>
+      </div>
+      <h1 class="text-3xl font-extrabold">Projets <span class="text-blue-400">Réalisés</span></h1>
+      <p class="text-gray-500 mt-1 text-sm">Voici la liste de mes travaux et réalisations.</p>
+    </div>
+
+    <!-- Grille -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Projet 1 -->
+      <article class="project-card fade-up-delay-1">
+        <div class="card-img-wrap">
+          <img src="assets/projet1.avif"
+               alt="Plateforme E-commerce">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Plateforme E-commerce Full Stack</h3>
+          <p class="card-date">Ajouté le 5 octobre 2023</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="tech-pill tech-badge-blue">React</span>
+            <span class="tech-pill tech-badge-green">Node.js</span>
+            <span class="tech-pill tech-badge-purple">Stripe</span>
+          </div>
+          <div class="card-footer">
+            <a href="first-project-details.html" class="mono text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+              Voir détails <i class="fas fa-arrow-right"></i>
+            </a>
+            <button type="button" class="btn-danger">
+              <i class="fas fa-trash-alt"></i> Supprimer
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Projet 2 -->
+      <article class="project-card fade-up-delay-2">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=500&q=80"
+               alt="App Mobile Santé">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Application mobile de santé</h3>
+          <p class="card-date">Ajouté le 15 septembre 2024</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="tech-pill tech-badge-blue">React Native</span>
+            <span class="tech-pill tech-badge-green">Node.js</span>
+          </div>
+          <div class="card-footer">
+            <a href="second-project-details.html" class="mono text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+              Voir détails <i class="fas fa-arrow-right"></i>
+            </a>
+            <button type="button" class="btn-danger">
+              <i class="fas fa-trash-alt"></i> Supprimer
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Projet 3 -->
+      <article class="project-card fade-up-delay-3">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=500&q=80"
+               alt="Dashboard Analytics">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Dashboard Analytics Temps Réel</h3>
+          <p class="card-date">Ajouté le 10 novembre 2025</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="tech-pill tech-badge-orange">HTML/CSS</span>
+            <span class="tech-pill tech-badge-indigo">PHP</span>
+          </div>
+          <div class="card-footer">
+            <a href="third-project-details.html" class="mono text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+              Voir détails <i class="fas fa-arrow-right"></i>
+            </a>
+            <button type="button" class="btn-danger">
+              <i class="fas fa-trash-alt"></i> Supprimer
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Projet 4 -->
+      <article class="project-card fade-up-delay-4">
+        <div class="card-img-wrap">
+          <img src="https://fr.organilog.com/wp-content/uploads/2022/11/logiciel-de-pointage-qr-code-equipement.webp"
+               alt="App Pointage">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Application de gestion de pointage</h3>
+          <p class="card-date">Ajouté le 18 janvier 2024</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="tech-pill tech-badge-blue">React</span>
+            <span class="tech-pill tech-badge-yellow">AWS</span>
+          </div>
+          <div class="card-footer">
+            <a href="fours-project-detail.html" class="mono text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+              Voir détails <i class="fas fa-arrow-right"></i>
+            </a>
+            <button type="button" class="btn-danger">
+              <i class="fas fa-trash-alt"></i> Supprimer
+            </button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <footer class="site-footer mt-12">
+      © 2026 FULLSTACK_PORTFOLIO
+    </footer>
+  </div>
+
+</body>
+</html>
