@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajouter un projet — Portfolio</title>
+  <link rel="stylesheet" href="./src/output.css" />
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">fullstack<span>_portfolio</span></a>
+      <div class="flex items-center gap-5">
+	  <a href="index.html"              class="nav-link">Accueil</a>
+        <a href="lister-projet.html" class="nav-link">Mes Projets</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-5xl mx-auto px-6 py-12">
+
+    <!-- Breadcrumb -->
+    <a href="lister-projet.html" class="breadcrumb">
+      <i class="fas fa-arrow-left"></i> Retour à la liste des projets
+    </a>
+
+    <!-- Titre -->
+    <div class="fade-up" style="margin-bottom:2rem;">
+      <div class="section-header">
+        <span class="section-label">// NOUVEAU PROJET</span>
+        <div class="section-line"></div>
+      </div>
+      <h1 class="text-3xl font-extrabold">Ajouter un <span class="text-blue-400">projet</span></h1>
+      <p class="text-gray-500 mt-1 text-sm">Documentez une nouvelle réalisation dans votre portfolio.</p>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="form-card fade-up-delay-1" style="max-width:48rem;">
+      <form class="space-y-6" onsubmit="return false;">
+
+        <!-- Libellé -->
+        <div>
+          <label class="form-label">LIBELLÉ DU PROJET *</label>
+          <input type="text"
+                 placeholder="Ex : Plateforme E-commerce Full Stack"
+                 required
+                 class="form-input">
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="form-label">DESCRIPTION *</label>
+          <textarea id="descTextarea"
+                    placeholder="Décrivez votre projet : objectifs, fonctionnalités, défis relevés..."
+                    maxlength="1000"
+                    rows="5"
+                    oninput="document.getElementById('charCount').textContent = this.value.length"
+                    class="form-textarea"></textarea>
+          <div class="flex justify-end mt-1">
+            <span class="mono text-xs text-gray-600"><span id="charCount">0</span>/1000</span>
+          </div>
+        </div>
+
+        <!-- Image -->
+        <div>
+          <label class="form-label">IMAGE DU PROJET</label>
+          <div class="form-file-wrap">
+            <input type="file" accept="image/*" class="w-full text-sm text-gray-400 cursor-pointer">
+          </div>
+          <p class="mono text-xs text-gray-600 mt-1">PNG, JPG, WEBP — max 5 Mo</p>
+        </div>
+
+        <!-- Technologies -->
+        <div>
+          <label class="form-label">TECHNOLOGIES UTILISÉES</label>
+          <div class="flex gap-2">
+            <input type="text"
+                   id="techInput"
+                   placeholder="Ex : React, Node.js, Docker..."
+                   class="form-input"
+                   style="flex:1;"
+                   onkeydown="if(event.key==='Enter'){event.preventDefault();addTech();}">
+            <button type="button" onclick="addTech()"
+                    class="btn-primary" style="background:#22c55e;"
+                    onmouseover="this.style.background='#16a34a'"
+                    onmouseout="this.style.background='#22c55e'">
+              <i class="fas fa-plus"></i> Ajouter
+            </button>
+          </div>
+          <p class="mono text-xs text-gray-600 mt-2">
+            Appuyez sur <kbd style="background:#1f2937;padding:0.1rem 0.4rem;border-radius:0.25rem;color:#9ca3af;">Entrée</kbd> ou cliquez sur « Ajouter » pour valider.
+          </p>
+          <div id="techList" class="flex flex-wrap gap-2 mt-3"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-between items-center divider" style="padding-top:1.5rem;">
+          <a href="lister-projet.html" class="btn-danger">
+            <i class="fas fa-times"></i> Annuler
+          </a>
+          <button type="submit" class="btn-primary px-6 py-3">
+            <i class="fas fa-save"></i> Enregistrer le projet
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const techs = [];
+    function addTech() {
+      const input = document.getElementById('techInput');
+      const val = input.value.trim();
+      if (!val || techs.includes(val)) { input.value = ''; return; }
+      techs.push(val);
+      renderTechs();
+      input.value = '';
+      input.focus();
+    }
+    function removeTech(i) { techs.splice(i, 1); renderTechs(); }
+    function renderTechs() {
+      document.getElementById('techList').innerHTML = techs.map((t, i) =>
+        `<span class="tech-tag">${t}<button onclick="removeTech(${i})" type="button"><i class="fas fa-times" style="font-size:0.65rem;margin-left:0.25rem;"></i></button></span>`
+      ).join('');
+    }
+  </script>
+
+</body>
+</html>
