@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siakha Kaba — Ingénieur Réseau & DevOps</title>
+  <meta name="description" content="Portfolio de Siakha Kaba — Ingénieur DevOps, AWS, Développement Web Fullstack, Réseau & Sécurité." />
+  <link rel="stylesheet" href="./src/output.css" />
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo flex items-center gap-3">
+	<img src="assets/logo-sk.jpeg" alt="SK Logo"SK.ADMIN
+         style="height:40px;width:40px;object-fit:cover;border-radius:50%;border:1.5px solid rgba(201,168,76,.55);box-shadow:0 0 16px rgba(201,168,76,.3);transition:box-shadow .3s;"
+         onmouseover="this.style.boxShadow='0 0 24px rgba(201,168,76,.6)'" onmouseout="this.style.boxShadow='0 0 16px rgba(201,168,76,.3)'">
+		SK.ADMIN
+    </a>
+    <div class="hidden md:flex gap-8">
+      <a href="#hero"              class="nav-link">Accueil</a>
+      <a href="lister-projet.html" class="nav-link">Mes Projets</a>
+      <a href="#contact"           class="nav-link">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="pt-28 min-h-screen flex items-center">
+  <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center py-20">
+
+    <div class="fade-up">
+      <div class="badge-available"><span></span> DISPONIBLE — OUVERT AUX OPPORTUNITÉS</div>
+
+      <h1 class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
+        Siakha <span class="text-blue-400">Kaba</span>
+      </h1>
+
+      <p class="mt-5 mono text-sm text-gray-400 tracking-wide">
+        <span class="text-blue-400">Ingénieur réseau </span> &nbsp;·&nbsp; Certifié AWS Partitioner &nbsp;·&nbsp; Fullstack Dev
+      </p>
+
+      <p class="mt-5 text-gray-400 leading-relaxed text-base max-w-md">
+        Je conçois et déploie des solutions web modernes —
+		de l’infrastructure cloud et des pipelines DevOps
+		jusqu’à des applications performantes et évolutives.
+		Avec une solide base en réseaux, sécurité informatique et systèmes distribués,
+		je veille à la fiabilité, la performance et la sécurité des architectures.
+		Passionné par l’automatisation, la qualité du code et l’amélioration continue.
+      </p>
+
+      <div class="flex flex-wrap gap-3 mt-8 fade-up-delay-2">
+        <a href="lister-projet.html" class="btn-primary px-6 py-3">
+          <i class="fas fa-folder-open"></i> Mes Projets
+        </a>
+        <a href="assets/cv.pdf" download class="btn-secondary px-6 py-3">
+          <i class="fas fa-file-pdf"></i> Télécharger CV
+        </a>
+        <a href="#contact" class="nav-link self-center px-2">Contact →</a>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-8 fade-up-delay-3">
+        <span class="skill-pill"><i class="fab fa-aws text-yellow-400"></i> AWS</span>
+        <span class="skill-pill"><i class="fab fa-docker text-cyan-400"></i> Docker</span>
+        <span class="skill-pill"><i class="fas fa-infinity text-purple-400"></i> CI/CD</span>
+        <span class="skill-pill"><i class="fab fa-react text-blue-400"></i> React</span>
+        <span class="skill-pill"><i class="fab fa-node-js text-green-400"></i> Node.js</span>
+        <span class="skill-pill"><i class="fas fa-shield-alt text-red-400"></i> Sécurité</span>
+      </div>
+    </div>
+
+    <div class="flex justify-center fade-up-delay-1">
+      <div class="relative w-80 h-96">
+        <div class="absolute -inset-4 bg-blue-500/10 rounded-3xl blur-3xl"></div>
+        <div class="absolute -top-3 -right-3 w-24 h-24 border border-blue-500/20 rounded-2xl"></div>
+        <div class="absolute -bottom-3 -left-3 w-16 h-16 border border-green-500/20 rounded-xl"></div>
+        <img src="assets/siakha.jpeg"
+             class="relative rounded-2xl border border-white/10 w-full h-full object-cover glow"
+             alt="Siakha Kaba">
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="py-24 divider">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="section-header">
+      <span class="section-label">// CONTACT</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-14 items-start">
+
+      <div>
+        <h2 class="text-3xl font-extrabold mb-3">Travaillons <span class="text-blue-400">ensemble</span></h2>
+        <p class="text-gray-400 mb-8 leading-relaxed text-sm">
+          Disponible pour des missions freelance, des collaborations ou des opportunités à temps plein.
+        </p>
+        <div class="space-y-4">
+          <a href="mailto:email@example.com" class="contact-link">
+            <div class="contact-icon"><i class="fas fa-envelope text-blue-400 text-sm"></i></div>
+            <span>email@example.com</span>
+          </a>
+          <a href="tel:+221770000000" class="contact-link">
+            <div class="contact-icon"><i class="fas fa-phone text-blue-400 text-sm"></i></div>
+            <span>+221 77 000 00 00</span>
+          </a>
+          <a href="https://linkedin.com/in/siakha-kaba" class="contact-link">
+            <div class="contact-icon"><i class="fab fa-linkedin text-blue-400 text-sm"></i></div>
+            <span>LinkedIn</span>
+          </a>
+          <a href="#" class="contact-link">
+            <div class="contact-icon"><i class="fab fa-github text-blue-400 text-sm"></i></div>
+            <span>GitHub</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="space-y-5">
+          <div>
+            <label class="form-label">NOM</label>
+            <input type="text" placeholder="Votre nom complet" class="form-input">
+          </div>
+          <div>
+            <label class="form-label">EMAIL</label>
+            <input type="email" placeholder="votre@email.com" class="form-input">
+          </div>
+          <div>
+            <label class="form-label">MESSAGE</label>
+            <textarea placeholder="Décrivez votre projet ou opportunité..." class="form-textarea" style="height:8rem;"></textarea>
+          </div>
+          <button class="btn-primary w-full justify-center py-3">
+            <i class="fas fa-paper-plane"></i> Envoyer le message
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">© 2026 — SIAKHA KABA · DEVOPS · AWS · FULLSTACK </footer>
+
+</body>
+</html>
