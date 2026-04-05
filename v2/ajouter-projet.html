@@ -109,25 +109,5 @@
       </form>
     </div>
   </div>
-
-  <script>
-    const techs = [];
-    function addTech() {
-      const input = document.getElementById('techInput');
-      const val = input.value.trim();
-      if (!val || techs.includes(val)) { input.value = ''; return; }
-      techs.push(val);
-      renderTechs();
-      input.value = '';
-      input.focus();
-    }
-    function removeTech(i) { techs.splice(i, 1); renderTechs(); }
-    function renderTechs() {
-      document.getElementById('techList').innerHTML = techs.map((t, i) =>
-        `<span class="tech-tag">${t}<button onclick="removeTech(${i})" type="button"><i class="fas fa-times" style="font-size:0.65rem;margin-left:0.25rem;"></i></button></span>`
-      ).join('');
-    }
-  </script>
-
 </body>
 </html>
