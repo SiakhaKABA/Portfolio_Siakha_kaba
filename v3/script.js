@@ -117,3 +117,23 @@ function detaillerProjet(id) {
   document.getElementById("modal-dynamique").classList.remove("hidden");
 }
 
+// Définition de la fonction supprimerProjet()
+
+async function supprimerProjet(id) {
+  if (!confirm("Voulez-vous vraiment supprimer ce projet ?")) return;
+
+  try {
+    await fetch(API_URL + "/" + id, { method: "DELETE" });
+
+    // Comparaison sans === strict
+    projets = projets.filter(p => p.id != id);
+
+    const carte = document.getElementById("projet-" + id);
+    if (carte) carte.remove();
+
+  } catch (error) {
+    console.error("Erreur suppression :", error);
+    alert("Erreur lors de la suppression. Vérifiez que json-server est lancé.");
+  }
+}
+
