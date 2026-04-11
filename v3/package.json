@@ -1,16 +1,7 @@
 {
-  "name": "v3",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "json-server": "^1.0.0-beta.15"
+    "@tailwindcss/cli": "^4.2.2",
+    "json-server": "^1.0.0-beta.15",
+    "tailwindcss": "^4.2.2"
   }
 }
