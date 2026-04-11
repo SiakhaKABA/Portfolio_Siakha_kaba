@@ -120,6 +120,7 @@ function detaillerProjet(id) {
 // Définition de la fonction supprimerProjet()
 
 async function supprimerProjet(id) {
+
   if (!confirm("Voulez-vous vraiment supprimer ce projet ?")) return;
 
   try {
