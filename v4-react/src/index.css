@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: #0f172a;
+    color: #f1f5f9;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', sans-serif;
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply px-6 py-2.5 rounded-full font-display text-base font-medium transition-all duration-300;
+  }
+  .nav-link-active {
+    @apply bg-teal-400 text-gray-900 shadow-lg shadow-teal-400/30;
+  }
+  .nav-link-inactive {
+    @apply text-gray-300 hover:bg-white/10 hover:text-teal-400;
+  }
+  .btn-primary {
+    @apply px-6 py-3 bg-teal-400 text-gray-900 rounded-xl font-semibold hover:bg-teal-300 transition-all duration-200 shadow-lg shadow-teal-400/20;
+  }
+  .btn-secondary {
+    @apply px-6 py-3 bg-white/10 text-white rounded-xl font-medium hover:bg-white/20 transition-all duration-200 border border-white/10;
+  }
+  .btn-danger {
+    @apply px-4 py-2 bg-red-500/20 text-red-400 rounded-lg font-medium hover:bg-red-500/40 transition-all duration-200 border border-red-500/30;
+  }
+  .input-field {
+    @apply w-full p-3 rounded-xl bg-slate-900/80 text-white border border-white/10 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-400/20 transition-all duration-200 placeholder-gray-500;
+  }
+  .card {
+    @apply bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-white/5 shadow-xl;
+  }
+  .section-title {
+    @apply text-5xl font-display font-bold;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #2dd4bf;
+  border-radius: 3px;
+}
+
+/* Smooth transitions for sections */
+section {
+  transition: opacity 0.3s ease;
+}
+
+/* Noise texture overlay */
+.noise::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.04;
+}
+
+/* Tech badge */
+.tech-badge {
+  @apply px-3 py-1 bg-teal-400/10 text-teal-300 rounded-full text-sm font-medium border border-teal-400/20;
+}
+
+/* Modal backdrop blur */
+.modal-overlay {
+  backdrop-filter: blur(8px);
+}
+
+/* Animated gradient background */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
