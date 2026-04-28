@@ -1,7 +1,6 @@
 {
   "projets": [
     {
-      "id": 1,
       "libelle": "Application E-commerce",
       "description": "Plateforme e-commerce complète avec panier, paiement en ligne et gestion des stocks. Développée avec React, Node.js et MongoDB. L'interface utilisateur est responsive et offre une expérience fluide sur tous les appareils.",
       "image": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80",
@@ -9,10 +8,10 @@
         "React",
         "Node.js",
         "MongoDB",
-        "Express",
-        "Stripe"
+        "Express"
       ],
-      "date": "2024-03-15"
+      "date": "2024-03-15",
+      "id": 1
     },
     {
       "id": 2,
