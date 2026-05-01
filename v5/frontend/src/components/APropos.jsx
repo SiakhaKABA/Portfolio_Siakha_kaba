@@ -49,7 +49,7 @@ const EMPTY = {
   competences:    { categorie: '', niveau: 70, outils: '' },
 }
 
-export default function APropos({ isAdmin, showToast }) {
+export default function APropos({ isAdmin, showToast, token }) {
   const [tab,       setTab]       = useState('formations')
   const [data,      setData]      = useState({ formations: [], certifications: [], experiences: [], competences: [] })
   const [loading,   setLoading]   = useState({})
@@ -93,7 +93,7 @@ export default function APropos({ isAdmin, showToast }) {
       // ⚠️ MongoDB utilise _id
       const url    = isEdit ? `${API}/${tab}/${modal.item._id}` : `${API}/${tab}`
       const method = isEdit ? 'PUT' : 'POST'
-      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) })
       if (!res.ok) throw new Error()
       await fetchSection(tab)
       showToast(isEdit ? '✓ Modifié' : '✓ Ajouté')
@@ -104,7 +104,7 @@ export default function APropos({ isAdmin, showToast }) {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`${API}/${tab}/${id}`, { method: 'DELETE' })
+      await fetch(`${API}/${tab}/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } })
       await fetchSection(tab)
       showToast('✓ Supprimé')
     } catch { showToast('Erreur suppression', 'error') }
