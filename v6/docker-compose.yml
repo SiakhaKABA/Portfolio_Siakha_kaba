@@ -2,16 +2,6 @@ version: "3.9"
 
 services:
 
-  # ── MongoDB ────────────────────────────────────────────
-  mongo:
-    image: mongo:7
-    container_name: portfolio_mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-    restart: unless-stopped
-
   # ── Backend Express (port 3001) ────────────────────────
   backend:
     build:
@@ -26,12 +16,10 @@ services:
       - /app/node_modules       # évite d'écraser node_modules du conteneur
     environment:
       - PORT=3001
-      - MONGO_URI=mongodb://mongo:27017/portfolio   # "mongo" = nom du service
       - NODE_ENV=development
+      # MONGO_URI est dans ./backend/.env (MongoDB Atlas)
     env_file:
-      - ./backend/.env          # charge JWT_SECRET et ADMIN_PASSWORD_HASH
-    depends_on:
-      - mongo
+      - ./backend/.env
     restart: unless-stopped
 
   # ── Frontend React / Vite (port 5173) ─────────────────
@@ -47,10 +35,8 @@ services:
       - ./frontend:/app         # hot reload
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:3001
+      # Permet au proxy Vite de résoudre "backend" dans le réseau Docker
+      - VITE_BACKEND_URL=http://backend:3001
     depends_on:
       - backend
     restart: unless-stopped
-
-volumes:
-  mongo_data:
