@@ -1,4 +1,3 @@
-Copier
 // Pipeline opérationnel !!!!
 pipeline {
     agent any
