@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "connections": [
+    {
+      "name": "Portfolio Local",
+      "connectionString": "mongodb://localhost:27017/portfolio",
+      "database": "portfolio"
+    }
+  ]
+}
