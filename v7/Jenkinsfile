@@ -1,0 +1,96 @@
+pipeline {
+    agent any
+
+    environment {
+        APP_NAME    = 'portfolio'
+        FRONTEND_URL = 'http://localhost:8080'
+        BACKEND_URL  = 'http://localhost:3001'
+    }
+
+    stages {
+
+        // ─────────────────────────────────────────
+        stage('Checkout') {
+        // ─────────────────────────────────────────
+            steps {
+                echo 'Récupération du code depuis GitHub...'
+                checkout scm
+            }
+        }
+
+        // ─────────────────────────────────────────
+        stage('Vérification') {
+        // ─────────────────────────────────────────
+            steps {
+                echo 'Vérification de l environnement...'
+                sh 'docker --version'
+                sh 'docker compose version'
+                sh 'ls -la'
+            }
+        }
+
+        // ─────────────────────────────────────────
+        stage('Build') {
+        // ─────────────────────────────────────────
+            steps {
+                echo 'Build des images Docker...'
+                sh 'docker compose build --no-cache'
+            }
+        }
+
+        // ─────────────────────────────────────────
+        stage('Arrêt ancienne version') {
+        // ─────────────────────────────────────────
+            steps {
+                echo 'Arrêt des anciens conteneurs...'
+                sh 'docker compose down --remove-orphans || true'
+            }
+        }
+
+        // ─────────────────────────────────────────
+        stage('Déploiement') {
+        // ─────────────────────────────────────────
+            steps {
+                echo 'Démarrage des conteneurs...'
+                sh 'docker compose up -d'
+                echo 'Attente du démarrage (15 sec)...'
+                sh 'sleep 15'
+            }
+        }
+
+        // ─────────────────────────────────────────
+        stage('Vérification santé') {
+        // ─────────────────────────────────────────
+            steps {
+                echo 'Vérification que les services sont UP...'
+                sh 'docker compose ps'
+                sh '''
+                    # Vérifier que le backend répond
+                    curl -f http://localhost:3001/api/projets && echo "Backend OK" || echo " Backend non disponible"
+                    # Vérifier que le frontend répond
+                    curl -f http://localhost:8080 && echo "Frontend OK" || echo " Frontend non disponible"
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo """
+             ================================
+               DÉPLOIEMENT RÉUSSI !
+               Frontend  : http://localhost:8080
+               Backend   : http://localhost:3001
+            ================================
+            """
+        }
+        failure {
+            echo 'Pipeline échoué — rollback...'
+            sh 'docker compose down || true'
+        }
+        always {
+            echo 'Logs des conteneurs :'
+            sh 'docker compose logs --tail=20 || true'
+        }
+    }
+}
