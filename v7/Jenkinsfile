@@ -14,6 +14,7 @@ pipeline {
         stage('Arret') {
             steps {
                 bat 'cd v7 && docker compose down --remove-orphans || exit 0'
+                bat 'docker rm -f portfolio_mongo portfolio_backend portfolio_frontend || exit 0'
             }
         }
         stage('Deploiement') {
