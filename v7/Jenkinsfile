@@ -2,95 +2,71 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME    = 'portfolio'
+        APP_NAME     = 'portfolio'
         FRONTEND_URL = 'http://localhost:8080'
         BACKEND_URL  = 'http://localhost:3001'
     }
 
     stages {
 
-        // ─────────────────────────────────────────
         stage('Checkout') {
-        // ─────────────────────────────────────────
             steps {
-                echo 'Récupération du code depuis GitHub...'
+                echo 'Recuperation du code depuis GitHub...'
                 checkout scm
             }
         }
 
-        // ─────────────────────────────────────────
-        stage('Vérification') {
-        // ─────────────────────────────────────────
+        stage('Verification') {
             steps {
-                echo 'Vérification de l environnement...'
-                sh 'docker --version'
-                sh 'docker compose version'
-                sh 'ls -la'
+                echo 'Verification de l environnement...'
+                bat 'docker --version'
+                bat 'docker compose version'
+                bat 'dir'
             }
         }
 
-        // ─────────────────────────────────────────
         stage('Build') {
-        // ─────────────────────────────────────────
             steps {
                 echo 'Build des images Docker...'
-                sh 'docker compose build --no-cache'
+                bat 'docker compose build --no-cache'
             }
         }
 
-        // ─────────────────────────────────────────
-        stage('Arrêt ancienne version') {
-        // ─────────────────────────────────────────
+        stage('Arret ancienne version') {
             steps {
-                echo 'Arrêt des anciens conteneurs...'
-                sh 'docker compose down --remove-orphans || true'
+                echo 'Arret des anciens conteneurs...'
+                bat 'docker compose down --remove-orphans || exit 0'
             }
         }
 
-        // ─────────────────────────────────────────
-        stage('Déploiement') {
-        // ─────────────────────────────────────────
+        stage('Deploiement') {
             steps {
-                echo 'Démarrage des conteneurs...'
-                sh 'docker compose up -d'
-                echo 'Attente du démarrage (15 sec)...'
-                sh 'sleep 15'
+                echo 'Demarrage des conteneurs...'
+                bat 'docker compose up -d'
+                echo 'Attente du demarrage (15 sec)...'
+                bat 'timeout /t 15 /nobreak'
             }
         }
 
-        // ─────────────────────────────────────────
-        stage('Vérification santé') {
-        // ─────────────────────────────────────────
+        stage('Verification sante') {
             steps {
-                echo 'Vérification que les services sont UP...'
-                sh 'docker compose ps'
-                sh '''
-                    # Vérifier que le backend répond
-                    curl -f http://localhost:3001/api/projets && echo "Backend OK" || echo " Backend non disponible"
-                    # Vérifier que le frontend répond
-                    curl -f http://localhost:8080 && echo "Frontend OK" || echo " Frontend non disponible"
-                '''
+                echo 'Verification que les services sont UP...'
+                bat 'docker compose ps'
             }
         }
     }
 
     post {
         success {
-            echo """
-             ================================
-               DÉPLOIEMENT RÉUSSI !
-               Frontend  : http://localhost:8080
-               Backend   : http://localhost:3001
-            ================================
-            """
+            echo 'DEPLOIEMENT REUSSI — http://localhost:8080'
         }
         failure {
-            echo 'Pipeline échoué — rollback...'
-            sh 'docker compose down || true'
+            echo 'Pipeline echoue — rollback...'
+            bat 'docker compose down || exit 0'
         }
         always {
-            echo 'Logs des conteneurs :'
-            sh 'docker compose logs --tail=20 || true'
+            echo 'Fin du pipeline'
+            bat 'docker compose ps || exit 0'
         }
     }
 }
