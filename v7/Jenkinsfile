@@ -1,5 +1,4 @@
 Copier
-
 // Pipeline opérationnel !!!!
 pipeline {
     agent any
@@ -48,7 +47,7 @@ pipeline {
                 subject: "SUCCESS - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: "<h2>Deploiement reussi</h2><p><b>Projet :</b> ${env.JOB_NAME}</p><p><b>Build :</b> ${env.BUILD_NUMBER}</p><p><b>Statut :</b> SUCCESS</p><p><b>Lien :</b> <a href='${env.BUILD_URL}'>${env.BUILD_URL}</a></p><p>Le portfolio a ete deploye avec succes.</p>",
                 mimeType: 'text/html',
-                to: 'abdoukarimsy018@gmail.com'
+                to: 'siakha.kaba@gmail.com'
             )
         }
  
@@ -59,7 +58,7 @@ pipeline {
                 subject: "FAILURE - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: "<h2>Deploiement echoue</h2><p><b>Projet :</b> ${env.JOB_NAME}</p><p><b>Build :</b> ${env.BUILD_NUMBER}</p><p><b>Statut :</b> FAILURE</p><p><b>Logs :</b> <a href='${env.BUILD_URL}'>${env.BUILD_URL}</a></p><p>Une erreur est survenue pendant le pipeline.</p>",
                 mimeType: 'text/html',
-                to: 'abdoukarimsy018@gmail.com'
+                to: 'siakha.kaba@gmail.com'
             )
         }
  
