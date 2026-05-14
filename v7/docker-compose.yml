@@ -24,8 +24,6 @@ services:
       - /app/node_modules
     environment:
       - PORT=3001
-      #- MONGO_URI=mongodb://host.docker.internal:27017/portfolio
-      - MONGO_URI=mongodb://mongo:27017/portfolio
       - NODE_ENV=development
     env_file:
       - ./backend/.env
@@ -45,8 +43,6 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    environment:
-      - VITE_API_URL=http://localhost:3001
     depends_on:
       - backend
     restart: unless-stopped
