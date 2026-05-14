@@ -1,50 +1,33 @@
-@"
 pipeline {
     agent any
-
     stages {
-
         stage('Checkout') {
             steps {
-                echo 'Recuperation du code...'
                 checkout scm
             }
         }
-
-        stage('Verification') {
-            steps {
-                bat 'docker --version'
-                bat 'docker compose version'
-                bat 'dir v7'
-            }
-        }
-
         stage('Build') {
             steps {
                 bat 'cd v7 && docker compose build --no-cache'
             }
         }
-
         stage('Arret') {
             steps {
                 bat 'cd v7 && docker compose down --remove-orphans || exit 0'
             }
         }
-
         stage('Deploiement') {
             steps {
                 bat 'cd v7 && docker compose up -d'
                 bat 'timeout /t 15 /nobreak'
             }
         }
-
-        stage('Verification sante') {
+        stage('Verification') {
             steps {
                 bat 'cd v7 && docker compose ps'
             }
         }
     }
-
     post {
         success {
             echo 'DEPLOIEMENT REUSSI - http://localhost:8080'
@@ -57,4 +40,3 @@ pipeline {
         }
     }
 }
-"@ | Out-File -FilePath "v7\Jenkinsfile" -Encoding utf8
