@@ -40,4 +40,81 @@ pipeline {
             bat 'cd v7 && docker compose ps || exit 0'
         }
     }
+	  // ── POST ACTIONS ────────────────────────────────────────
+    post {
+
+        success {
+
+            echo "Pipeline réussi — Portfolio déployé "
+
+            emailext (
+                subject: "SUCCESS - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+
+                body: """
+                <h2>Déploiement réussi </h2>
+
+                <p><b>Projet :</b> ${env.JOB_NAME}</p>
+
+                <p><b>Build :</b> ${env.BUILD_NUMBER}</p>
+
+                <p><b>Statut :</b> SUCCESS</p>
+
+                <p><b>Pipeline Jenkins :</b></p>
+
+                <a href="${env.BUILD_URL}">
+                    ${env.BUILD_URL}
+                </a>
+
+                <br><br>
+
+                <p>Le portfolio a été déployé avec succès.</p>
+                """,
+
+                mimeType: 'text/html',
+
+                to: 'abdoukarimsy018@gmail.com'
+            )
+        }
+
+        failure {
+
+            echo "Pipeline échoué — consulte les logs "
+
+            emailext (
+                subject: "FAILURE - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+
+                body: """
+                <h2>Déploiement échoué </h2>
+
+                <p><b>Projet :</b> ${env.JOB_NAME}</p>
+
+                <p><b>Build :</b> ${env.BUILD_NUMBER}</p>
+
+                <p><b>Statut :</b> FAILURE</p>
+
+                <p><b>Consulter les logs Jenkins :</b></p>
+
+                <a href="${env.BUILD_URL}">
+                    ${env.BUILD_URL}
+                </a>
+
+                <br><br>
+
+                <p>Une erreur est survenue pendant le pipeline.</p>
+                """,
+
+                mimeType: 'text/html',
+
+                to: 'abdoukarimsy018@gmail.com'
+            )
+        }
+
+        always {
+
+            echo "Nettoyage du workspace..."
+
+            cleanWs()
+        }
+    }
+}
 }
