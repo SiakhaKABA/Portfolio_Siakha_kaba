@@ -20,7 +20,7 @@ pipeline {
         stage('Deploiement') {
             steps {
                 bat 'cd v7 && docker compose up -d'
-                bat 'timeout /t 15 /nobreak'
+                bat 'ping -n 16 127.0.0.1 > nul'
             }
         }
         stage('Verification') {
@@ -34,7 +34,7 @@ pipeline {
             echo 'DEPLOIEMENT REUSSI - http://localhost:8080'
         }
         failure {
-            bat 'cd v7 && docker compose down || exit 0'
+            echo 'Pipeline echoue'
         }
         always {
             bat 'cd v7 && docker compose ps || exit 0'
