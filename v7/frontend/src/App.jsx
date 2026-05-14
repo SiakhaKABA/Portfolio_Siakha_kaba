@@ -10,7 +10,7 @@ import Footer          from './components/Footer'
 import Toast           from './components/Toast'
 import LoginModal      from './components/LoginModal'
 
-const API = '/api'
+const API = import.meta.env.VITE_API_URL || '/api'
 
 export default function App() {
   const [page,         setPage]         = useState('accueil')

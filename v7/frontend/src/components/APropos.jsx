@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 
-const API = '/api'
+const API = import.meta.env.VITE_API_URL || '/api'
 
 const TABS = [
   { key: 'formations',     label: 'Formation',     icon: 'fa-graduation-cap', color: 'teal'    },

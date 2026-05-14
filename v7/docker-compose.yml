@@ -24,8 +24,8 @@ services:
       - /app/node_modules
     environment:
       - PORT=3001
-      - MONGO_URI=mongodb://host.docker.internal:27017/portfolio
-      #- MONGO_URI=mongodb://mongo:27017/portfolio
+      #- MONGO_URI=mongodb://host.docker.internal:27017/portfolio
+      - MONGO_URI=mongodb://mongo:27017/portfolio
       - NODE_ENV=development
     env_file:
       - ./backend/.env
