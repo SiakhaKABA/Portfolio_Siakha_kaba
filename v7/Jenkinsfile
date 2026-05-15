@@ -1,0 +1,72 @@
+// Pipeline opérationnel !!!!
+pipeline {
+    agent any
+ 
+    stages {
+ 
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+ 
+        stage('Build') {
+            steps {
+                bat 'cd v7 && docker compose build --no-cache'
+            }
+        }
+ 
+        stage('Arret') {
+            steps {
+                bat 'cd v7 && docker compose down --remove-orphans || exit 0'
+            }
+        }
+ 
+        stage('Deploiement') {
+            steps {
+				bat 'copy "C:\\secrets\\backend.env" "%WORKSPACE%\\v7\\backend\\.env"'
+                bat 'cd v7 && docker compose up -d'
+                sleep(time: 15, unit: 'SECONDS')
+            }
+        }
+ 
+        stage('Verification') {
+            steps {
+                bat 'cd v7 && docker compose ps'
+            }
+        }
+ 
+    }
+ 
+    // ── UN SEUL BLOC POST ────────────────────────────────────────
+    post {
+ 
+        success {
+            echo "Pipeline reussi - Portfolio deploye"
+            emailext(
+                subject: "SUCCESS - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "<h2>Deploiement reussi</h2><p><b>Projet :</b> ${env.JOB_NAME}</p><p><b>Build :</b> ${env.BUILD_NUMBER}</p><p><b>Statut :</b> SUCCESS</p><p><b>Lien :</b> <a href='${env.BUILD_URL}'>${env.BUILD_URL}</a></p><p>Le portfolio a ete deploye avec succes.</p>",
+                mimeType: 'text/html',
+                to: 'siakha.kaba@gmail.com'
+            )
+        }
+ 
+        failure {
+            echo "Pipeline echoue - consulte les logs"
+            bat 'cd v7 && docker compose down || exit 0'
+            emailext(
+                subject: "FAILURE - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "<h2>Deploiement echoue</h2><p><b>Projet :</b> ${env.JOB_NAME}</p><p><b>Build :</b> ${env.BUILD_NUMBER}</p><p><b>Statut :</b> FAILURE</p><p><b>Logs :</b> <a href='${env.BUILD_URL}'>${env.BUILD_URL}</a></p><p>Une erreur est survenue pendant le pipeline.</p>",
+                mimeType: 'text/html',
+                to: 'siakha.kaba@gmail.com'
+            )
+        }
+ 
+        always {
+            echo "Nettoyage du workspace..."
+            bat 'cd v7 && docker compose ps || exit 0'
+            cleanWs()
+        }
+ 
+    }
+}
