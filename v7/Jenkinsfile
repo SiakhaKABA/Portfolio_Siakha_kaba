@@ -1,4 +1,4 @@
-/ Pipeline opérationnel !!!!
+// Pipeline opérationnel !!!!
 pipeline {
     agent any
  
