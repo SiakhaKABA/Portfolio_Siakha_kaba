@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-        COMPOSE_FILE = 'docker-compose.yml'
+        COMPOSE_FILE = 'docker-compose.deploy.yml'
     }
 
     stages {
@@ -74,9 +74,9 @@ pipeline {
         }
 
         always {
-            echo "Nettoyage du workspace..."
+            echo "Verification finale (workspace conserve pour les bind-mounts)"
             bat "cd v7 && docker compose -f %COMPOSE_FILE% ps || exit 0"
-            cleanWs()
+            // PAS de cleanWs() : si on supprime le workspace, les containers perdent leur code
         }
 
     }
