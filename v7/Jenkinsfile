@@ -56,11 +56,9 @@ pipeline {
         stage('Push Docker Hub') {
             steps {
                 echo "Push des images vers Docker Hub..."
-                // 4 commandes separees : si une echoue, le pipeline s'arrete
-                bat "docker push %DOCKERHUB_REPO%:backend-%BUILD_TAG%"
-                bat "docker push %DOCKERHUB_REPO%:backend-latest"
-                bat "docker push %DOCKERHUB_REPO%:frontend-%BUILD_TAG%"
-                bat "docker push %DOCKERHUB_REPO%:frontend-latest"
+                // 2 commandes separees : si une echoue, le pipeline s'arrete
+                bat "docker push %DOCKERHUB_REPO%:backend-latest-%BUILD_TAG%"
+                bat "docker push %DOCKERHUB_REPO%:frontend-latest-%BUILD_TAG%"
                 echo "Toutes les images ont ete pushees avec succes !"
                 bat "docker logout"
             }
@@ -105,10 +103,8 @@ pipeline {
                 <h3>Images publiees sur Docker Hub :</h3>
                 <p><a href='https://hub.docker.com/r/siakhakaba19/portfolio/tags'>https://hub.docker.com/r/siakhakaba19/portfolio</a></p>
                 <ul>
-                    <li>siakhakaba19/portfolio:backend-${env.BUILD_NUMBER}</li>
-                    <li>siakhakaba19/portfolio:backend-latest</li>
-                    <li>siakhakaba19/portfolio:frontend-${env.BUILD_NUMBER}</li>
-                    <li>siakhakaba19/portfolio:frontend-latest</li>
+                    <li>siakhakaba19/portfolio:backend-latest-${env.BUILD_NUMBER}</li>
+                    <li>siakhakaba19/portfolio:frontend-latest-${env.BUILD_NUMBER}</li>
                 </ul>""",
                 mimeType: 'text/html',
                 to: 'siakha.kaba94@gmail.com',
