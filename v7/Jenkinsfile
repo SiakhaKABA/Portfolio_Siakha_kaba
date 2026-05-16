@@ -111,9 +111,9 @@ pipeline {
                     <li>siakhakaba19/portfolio:frontend-latest</li>
                 </ul>""",
                 mimeType: 'text/html',
-                to: 'siakha.kaba@gmail.com',
-                from: 'siakha.kaba@gmail.com',
-                replyTo: 'siakha.kaba@gmail.com'
+                to: 'siakha.kaba94@gmail.com',
+                from: 'siakha.kaba94@gmail.com',
+                replyTo: 'siakha.kaba94@gmail.com'
             )
         }
 
@@ -130,9 +130,9 @@ pipeline {
                 <p><b>Statut :</b> FAILURE</p>
                 <p><b>Logs :</b> <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>""",
                 mimeType: 'text/html',
-                to: 'siakha.kaba@gmail.com',
-                from: 'siakha.kaba@gmail.com',
-                replyTo: 'siakha.kaba@gmail.com'
+                to: 'siakha.kaba94@gmail.com',
+                from: 'siakha.kaba94@gmail.com',
+                replyTo: 'siakha.kaba94@gmail.com'
             )
         }
 
