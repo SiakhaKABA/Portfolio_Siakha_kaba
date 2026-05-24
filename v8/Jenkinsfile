@@ -21,7 +21,7 @@ pipeline {
 
         stage('Preparation env') {
             steps {
-                bat 'copy "C:\\secrets\\backend.env" "%WORKSPACE%\\backend\\.env"'
+                bat 'copy "C:\\secrets\\backend.env" "%WORKSPACE%\\v8\\backend\\.env"'
             }
         }
 
@@ -31,7 +31,7 @@ pipeline {
                 script {
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                         bat """
-                            cd "%WORKSPACE%"
+                            cd "%WORKSPACE%\\v8"
                             "%SONAR_SCANNER%" ^
                             -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
                             -Dsonar.sources=backend,frontend/src ^
@@ -64,7 +64,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Construction des images Docker..."
-                bat "docker compose -f %COMPOSE_FILE% build --no-cache"
+                bat "cd v8 && docker compose -f %COMPOSE_FILE% build --no-cache"
             }
         }
 
@@ -103,22 +103,22 @@ pipeline {
 
         stage('Arret') {
             steps {
-                bat "docker compose -f %COMPOSE_FILE% down --remove-orphans || exit 0"
+                bat "cd v8 && docker compose -f %COMPOSE_FILE% down --remove-orphans || exit 0"
             }
         }
 
         stage('Deploiement') {
             steps {
-                bat "docker compose -f %COMPOSE_FILE% up -d"
+                bat "cd v8 && docker compose -f %COMPOSE_FILE% up -d"
                 sleep(time: 15, unit: 'SECONDS')
             }
         }
 
         stage('Verification') {
             steps {
-                bat "docker compose -f %COMPOSE_FILE% ps"
-                bat "docker compose -f %COMPOSE_FILE% logs --tail=30 frontend"
-                bat "docker compose -f %COMPOSE_FILE% logs --tail=30 backend"
+                bat "cd v8 && docker compose -f %COMPOSE_FILE% ps"
+                bat "cd v8 && docker compose -f %COMPOSE_FILE% logs --tail=30 frontend"
+                bat "cd v8 && docker compose -f %COMPOSE_FILE% logs --tail=30 backend"
             }
         }
 
@@ -158,8 +158,8 @@ pipeline {
 
         failure {
             echo "Pipeline echoue - consulte les logs"
-            bat "docker compose -f %COMPOSE_FILE% logs --tail=100 || exit 0"
-            bat "docker compose -f %COMPOSE_FILE% down || exit 0"
+            bat "cd v8 && docker compose -f %COMPOSE_FILE% logs --tail=100 || exit 0"
+            bat "cd v8 && docker compose -f %COMPOSE_FILE% down || exit 0"
             bat "docker logout || exit 0"
             emailext(
                 subject: "FAILURE - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
@@ -177,7 +177,7 @@ pipeline {
 
         always {
             echo "Verification finale"
-            bat "docker compose -f %COMPOSE_FILE% ps || exit 0"
+            bat "cd v8 && docker compose -f %COMPOSE_FILE% ps || exit 0"
         }
 
     }
