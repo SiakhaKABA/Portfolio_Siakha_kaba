@@ -30,7 +30,7 @@ const updateProjet = async (req, res) => {
     if (!projet) return res.status(404).json({ message: 'Projet non trouvé' })
     res.status(200).json(projet)
   } catch (err) {
-    res.status(400).json({ message: err.message })
+    res.status(err.kind === 'ObjectId' ? 400 : 500).json({ message: err.message })
   }
 }
 

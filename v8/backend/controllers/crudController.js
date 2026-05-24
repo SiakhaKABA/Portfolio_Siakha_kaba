@@ -44,7 +44,7 @@ const crudController = (Model) => ({
       if (!item) return res.status(404).json({ message: 'Entrée non trouvée' })
       res.status(200).json(item)
     } catch (err) {
-      res.status(err.kind === 'ObjectId' ? 400 : 400).json({ message: err.message })
+      res.status(err.kind === 'ObjectId' ? 400 : 500).json({ message: err.message })
     }
   },
 
