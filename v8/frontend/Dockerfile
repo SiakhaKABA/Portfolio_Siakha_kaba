@@ -7,8 +7,12 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copie récursive contrôlée - exclusions gérées par .dockerignore
-COPY . .
+# Copie explicite des fichiers et répertoires nécessaires
+COPY index.html ./
+COPY vite.config.js ./
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
+COPY src ./src
 
 EXPOSE 5173
 CMD ["npm", "run", "dev", "--", "--host"]
@@ -23,8 +27,12 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copie récursive contrôlée - exclusions gérées par .dockerignore
-COPY . .
+# Copie explicite des fichiers et répertoires nécessaires
+COPY index.html ./
+COPY vite.config.js ./
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
+COPY src ./src
 RUN npm run build
 
 
