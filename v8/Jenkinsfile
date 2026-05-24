@@ -28,16 +28,9 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo "=== Analyse de la qualite du code avec SonarQube ==="
-                script {
+                dir('v8') {
                     withSonarQubeEnv('SonarQube') {
-                        bat """
-                            cd "%WORKSPACE%\\v8"
-                            "%SONAR_SCANNER%" ^
-                            -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
-                            -Dsonar.sources=backend,frontend/src ^
-                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
-                            -Dsonar.sourceEncoding=UTF-8
-                        """
+                        bat '''"%SONAR_SCANNER%" -Dsonar.projectKey=%SONAR_PROJECT_KEY% -Dsonar.sources=backend,frontend/src -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** -Dsonar.sourceEncoding=UTF-8'''
                     }
                 }
                 echo "Analyse SonarQube terminee"
