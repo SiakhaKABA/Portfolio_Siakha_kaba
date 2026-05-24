@@ -1,0 +1,184 @@
+// Pipeline complet : Build + SonarQube Analysis + Push Docker Hub + Deploiement
+pipeline {
+    agent any
+
+    environment {
+        COMPOSE_FILE   = 'docker-compose.yml'
+        DOCKERHUB_REPO = 'siakhakaba19/portfolio'
+        BUILD_TAG      = "${env.BUILD_NUMBER}"
+        SONAR_SCANNER  = 'C:\\Users\\Soni-info Tech\\sonar-scanner\\bin\\sonar-scanner.bat'
+        SONAR_HOST_URL = 'http://localhost:9000'
+        SONAR_PROJECT_KEY = 'portfolio-siakha-kaba'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Preparation env') {
+            steps {
+                bat 'copy "C:\\secrets\\backend.env" "%WORKSPACE%\\backend\\.env"'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo "=== Analyse de la qualite du code avec SonarQube ==="
+                script {
+                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                        bat """
+                            cd "%WORKSPACE%"
+                            "%SONAR_SCANNER%" ^
+                            -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
+                            -Dsonar.sources=backend,frontend/src ^
+                            -Dsonar.host.url=%SONAR_HOST_URL% ^
+                            -Dsonar.token=%SONAR_TOKEN% ^
+                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
+                            -Dsonar.sourceEncoding=UTF-8
+                        """
+                    }
+                }
+                echo "Analyse SonarQube terminee"
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                echo "=== Verification du Quality Gate SonarQube ==="
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Quality Gate failed: ${qg.status}"
+                        }
+                        echo "Quality Gate passed!"
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Construction des images Docker..."
+                bat "docker compose -f %COMPOSE_FILE% build --no-cache"
+            }
+        }
+
+        stage('Tag images') {
+            steps {
+                echo "Tag des images pour Docker Hub..."
+                bat "docker tag v8-backend  %DOCKERHUB_REPO%:backend-latest"
+                bat "docker tag v8-frontend %DOCKERHUB_REPO%:frontend-latest"
+            }
+        }
+
+        stage('Login Docker Hub') {
+            steps {
+                echo "Connexion a Docker Hub..."
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    // Login en commande separee : si echec, le stage echoue immediatement
+                    bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
+                }
+            }
+        }
+
+        stage('Push Docker Hub') {
+            steps {
+                echo "Push des images vers Docker Hub..."
+                // 4 commandes separees : si une echoue, le pipeline s'arrete
+                bat "docker push %DOCKERHUB_REPO%:backend-latest"
+                bat "docker push %DOCKERHUB_REPO%:frontend-latest"
+                echo "Toutes les images ont ete pushees avec succes !"
+                bat "docker logout"
+            }
+        }
+
+        stage('Arret') {
+            steps {
+                bat "docker compose -f %COMPOSE_FILE% down --remove-orphans || exit 0"
+            }
+        }
+
+        stage('Deploiement') {
+            steps {
+                bat "docker compose -f %COMPOSE_FILE% up -d"
+                sleep(time: 15, unit: 'SECONDS')
+            }
+        }
+
+        stage('Verification') {
+            steps {
+                bat "docker compose -f %COMPOSE_FILE% ps"
+                bat "docker compose -f %COMPOSE_FILE% logs --tail=30 frontend"
+                bat "docker compose -f %COMPOSE_FILE% logs --tail=30 backend"
+            }
+        }
+
+    }
+
+    post {
+
+        success {
+            echo "Pipeline reussi - Portfolio deploye et images publiees sur Docker Hub"
+            script {
+                def sonarUrl = "${SONAR_HOST_URL}/dashboard?id=${SONAR_PROJECT_KEY}"
+                emailext(
+                    subject: "SUCCESS - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    body: """<h2 style="color:green;">Deploiement reussi</h2>
+                    <p><b>Projet :</b> ${env.JOB_NAME}</p>
+                    <p><b>Build :</b> ${env.BUILD_NUMBER}</p>
+                    <p><b>Statut :</b> SUCCESS</p>
+                    <p><b>Lien Jenkins :</b> <a href='${env.BUILD_URL}'>${env.BUILD_URL}</a></p>
+                    <p><b>Application :</b> <a href='http://localhost:8080'>http://localhost:8080</a></p>
+                    <hr>
+                    <h3>Analyse SonarQube :</h3>
+                    <p><a href='${sonarUrl}'>${sonarUrl}</a></p>
+                    <hr>
+                    <h3>Images publiees sur Docker Hub :</h3>
+                    <p><a href='https://hub.docker.com/r/siakhakaba19/portfolio/tags'>https://hub.docker.com/r/siakhakaba19/portfolio</a></p>
+                    <ul>
+                        <li>siakhakaba19/portfolio:backend-latest</li>
+                        <li>siakhakaba19/portfolio:frontend-latest</li>
+                    </ul>""",
+                    mimeType: 'text/html',
+                    to: 'siakha.kaba94@gmail.com',
+                    from: 'siakha.kaba94@gmail.com',
+                    replyTo: 'siakha.kaba94@gmail.com'
+                )
+            }
+        }
+
+        failure {
+            echo "Pipeline echoue - consulte les logs"
+            bat "docker compose -f %COMPOSE_FILE% logs --tail=100 || exit 0"
+            bat "docker compose -f %COMPOSE_FILE% down || exit 0"
+            bat "docker logout || exit 0"
+            emailext(
+                subject: "FAILURE - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """<h2 style="color:red;">Deploiement echoue</h2>
+                <p><b>Projet :</b> ${env.JOB_NAME}</p>
+                <p><b>Build :</b> ${env.BUILD_NUMBER}</p>
+                <p><b>Statut :</b> FAILURE</p>
+                <p><b>Logs :</b> <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>""",
+                mimeType: 'text/html',
+                to: 'siakha.kaba94@gmail.com',
+                from: 'siakha.kaba94@gmail.com',
+                replyTo: 'siakha.kaba94@gmail.com'
+            )
+        }
+
+        always {
+            echo "Verification finale"
+            bat "docker compose -f %COMPOSE_FILE% ps || exit 0"
+        }
+
+    }
+}
