@@ -12,6 +12,9 @@ connectDB()
 const app  = express()
 const PORT = process.env.PORT || 3001
 
+// ── Sécurité : masquer les informations techniques ───
+app.disable('x-powered-by')
+
 // ── Middlewares ─────────────────────────────
 app.use(cors())
 app.use(express.json({ limit: '10mb' }))   // accepte images/PDF en base64
@@ -30,7 +33,7 @@ app.use('/api/experiences',    sections.experiences)
 app.use('/api/competences',    sections.competences)
 
 // ── Santé ────────────────────────────────────
-app.get('/', (_req, res) => res.json({ message: '🚀 API Portfolio opérationnelle', version: '2.0.0' }))
+app.get('/', (_req, res) => res.json({ message: '🚀 API Portfolio opérationnelle' }))
 
 // ── 404 ──────────────────────────────────────
 app.use((req, res) => res.status(404).json({ message: `Route ${req.originalUrl} introuvable` }))
