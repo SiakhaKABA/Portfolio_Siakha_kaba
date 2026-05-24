@@ -7,6 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Copie récursive contrôlée - exclusions gérées par .dockerignore
 COPY . .
 
 EXPOSE 5173
@@ -22,6 +23,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Copie récursive contrôlée - exclusions gérées par .dockerignore
 COPY . .
 RUN npm run build
 

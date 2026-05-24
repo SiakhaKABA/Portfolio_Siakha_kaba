@@ -1,5 +1,44 @@
+# Dépendances
 node_modules
-dist
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environnement et secrets
 .env
+.env.*
+*.key
+*.pem
+*.crt
+
+# Contrôle de version
 .git
+.gitignore
+.gitattributes
+
+# Build et cache
+dist
+build
+.cache
 *.log
+
+# Tests et documentation
+test
+tests
+*.test.js
+*.spec.js
+coverage
+docs
+README.md
+*.md
+
+# IDE et éditeurs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Fichiers système
+.DS_Store
+Thumbs.db
