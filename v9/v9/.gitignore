@@ -1,0 +1,75 @@
+# ============================================================
+#  .gitignore — portfolio-complet
+#  Stack : Node.js / Express / MongoDB  +  React / Vite / Tailwind
+# ============================================================
+
+
+# ────────────────────────────────────────
+#  Dépendances (ne jamais push)
+# ────────────────────────────────────────
+node_modules/
+portfolio-api/node_modules/
+portfolio-v2/node_modules/
+
+
+# ────────────────────────────────────────
+#  Variables d'environnement  ⚠️ SECRETS
+#  (MONGO_URI, PORT, clés API…)
+# ────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+portfolio-api/.env
+
+
+# ────────────────────────────────────────
+#  Build Vite (fichiers générés)
+# ────────────────────────────────────────
+portfolio-v2/dist/
+portfolio-v2/.vite/
+
+
+# ────────────────────────────────────────
+#  Logs
+# ────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# ────────────────────────────────────────
+#  Cache & fichiers temporaires
+# ────────────────────────────────────────
+.cache/
+.parcel-cache/
+.eslintcache
+*.tsbuildinfo
+*.tmp
+*.temp
+*.bak
+*~
+
+
+# ────────────────────────────────────────
+#  Éditeurs & IDE
+# ────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.sw?
+
+
+# ────────────────────────────────────────
+#  Système d'exploitation
+# ────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+Desktop.ini

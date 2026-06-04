@@ -1,0 +1,167 @@
+// Pipeline complet : Build + SonarQube Analysis + Push Docker Hub + Deploiement Kubernetes
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_REPO    = 'siakhakaba19/portfolio'
+        BUILD_TAG         = "${env.BUILD_NUMBER}"
+        SONAR_SCANNER     = 'C:\\Users\\Soni-info Tech\\sonar-scanner\\bin\\sonar-scanner.bat'
+        SONAR_HOST_URL    = 'http://localhost:9000'
+        SONAR_PROJECT_KEY = 'portfolio-siakha-kaba'
+        K8S_NAMESPACE     = 'default'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Preparation env') {
+            steps {
+                bat 'copy "C:\\secrets\\backend.env" "%WORKSPACE%\\v9\\backend\\.env"'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo "=== Analyse de la qualite du code avec SonarQube ==="
+                dir('v9') {
+                    withSonarQubeEnv('SonarQube') {
+                        bat '''"%SONAR_SCANNER%" -Dsonar.projectKey=%SONAR_PROJECT_KEY% -Dsonar.sources=backend,frontend/src -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** -Dsonar.sourceEncoding=UTF-8'''
+                    }
+                }
+                echo "Analyse SonarQube terminee"
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                echo "=== Verification du Quality Gate SonarQube ==="
+                echo "Dashboard : ${SONAR_HOST_URL}/dashboard?id=${SONAR_PROJECT_KEY}"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Construction des images Docker (target prod)..."
+                bat "docker build -t %DOCKERHUB_REPO%:backend-%BUILD_TAG%  -t %DOCKERHUB_REPO%:backend-latest  v9/backend  --target prod"
+                bat "docker build -t %DOCKERHUB_REPO%:frontend-%BUILD_TAG% -t %DOCKERHUB_REPO%:frontend-latest v9/frontend --target prod"
+            }
+        }
+
+        stage('Login Docker Hub') {
+            steps {
+                echo "Connexion a Docker Hub..."
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
+                }
+            }
+        }
+
+        stage('Push Docker Hub') {
+            steps {
+                echo "Push des images vers Docker Hub..."
+                bat "docker push %DOCKERHUB_REPO%:backend-%BUILD_TAG%"
+                bat "docker push %DOCKERHUB_REPO%:backend-latest"
+                bat "docker push %DOCKERHUB_REPO%:frontend-%BUILD_TAG%"
+                bat "docker push %DOCKERHUB_REPO%:frontend-latest"
+                echo "Images pushees avec succes !"
+                bat "docker logout"
+            }
+        }
+
+        stage('Deploy Kubernetes') {
+            steps {
+                echo "=== Deploiement sur Kubernetes (Docker Desktop) ==="
+
+                bat "kubectl apply -f v9/k8s/00-secret.yaml"
+                bat "kubectl apply -f v9/k8s/01-mongo-pvc.yaml"
+                bat "kubectl apply -f v9/k8s/02-mongo.yaml"
+                bat "kubectl apply -f v9/k8s/03-backend.yaml"
+                bat "kubectl apply -f v9/k8s/04-frontend.yaml"
+
+                // Forcer le re-pull de la nouvelle image
+                bat "kubectl set image deployment/backend  backend=%DOCKERHUB_REPO%:backend-%BUILD_TAG%  -n %K8S_NAMESPACE%"
+                bat "kubectl set image deployment/frontend frontend=%DOCKERHUB_REPO%:frontend-%BUILD_TAG% -n %K8S_NAMESPACE%"
+
+                echo "Attente du rollout backend..."
+                bat "kubectl rollout status deployment/backend  -n %K8S_NAMESPACE% --timeout=120s"
+                echo "Attente du rollout frontend..."
+                bat "kubectl rollout status deployment/frontend -n %K8S_NAMESPACE% --timeout=120s"
+            }
+        }
+
+        stage('Verification') {
+            steps {
+                echo "=== Etat du cluster ==="
+                bat "kubectl get pods     -n %K8S_NAMESPACE%"
+                bat "kubectl get services -n %K8S_NAMESPACE%"
+            }
+        }
+
+    }
+
+    post {
+
+        success {
+            echo "Pipeline reussi - Portfolio deploye sur Kubernetes"
+            script {
+                def sonarUrl = "${SONAR_HOST_URL}/dashboard?id=${SONAR_PROJECT_KEY}"
+                emailext(
+                    subject: "SUCCESS - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    body: """<h2 style="color:green;">Deploiement reussi</h2>
+                    <p><b>Projet :</b> ${env.JOB_NAME}</p>
+                    <p><b>Build :</b> ${env.BUILD_NUMBER}</p>
+                    <p><b>Statut :</b> SUCCESS</p>
+                    <p><b>Lien Jenkins :</b> <a href='${env.BUILD_URL}'>${env.BUILD_URL}</a></p>
+                    <p><b>Application :</b> <a href='http://localhost:30080'>http://localhost:30080</a></p>
+                    <hr>
+                    <h3>Analyse SonarQube :</h3>
+                    <p><a href='${sonarUrl}'>${sonarUrl}</a></p>
+                    <hr>
+                    <h3>Images publiees sur Docker Hub :</h3>
+                    <ul>
+                        <li>siakhakaba19/portfolio:backend-${env.BUILD_NUMBER}</li>
+                        <li>siakhakaba19/portfolio:frontend-${env.BUILD_NUMBER}</li>
+                    </ul>""",
+                    mimeType: 'text/html',
+                    to: 'siakha.kaba94@gmail.com',
+                    from: 'siakha.kaba94@gmail.com',
+                    replyTo: 'siakha.kaba94@gmail.com'
+                )
+            }
+        }
+
+        failure {
+            echo "Pipeline echoue - consulte les logs"
+            bat "kubectl get pods -n default || exit 0"
+            bat "kubectl describe pods -n default || exit 0"
+            bat "docker logout || exit 0"
+            emailext(
+                subject: "FAILURE - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """<h2 style="color:red;">Deploiement echoue</h2>
+                <p><b>Projet :</b> ${env.JOB_NAME}</p>
+                <p><b>Build :</b> ${env.BUILD_NUMBER}</p>
+                <p><b>Statut :</b> FAILURE</p>
+                <p><b>Logs :</b> <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>""",
+                mimeType: 'text/html',
+                to: 'siakha.kaba94@gmail.com',
+                from: 'siakha.kaba94@gmail.com',
+                replyTo: 'siakha.kaba94@gmail.com'
+            )
+        }
+
+        always {
+            echo "Etat final du cluster"
+            bat "kubectl get pods -n default || exit 0"
+        }
+
+    }
+}
