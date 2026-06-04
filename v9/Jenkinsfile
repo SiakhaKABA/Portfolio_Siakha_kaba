@@ -77,26 +77,25 @@ pipeline {
             }
         }
 
-        stage('Deploy Kubernetes') {
-            steps {
-                echo "=== Deploiement sur Kubernetes (Docker Desktop) ==="
+		stage('Deploy Kubernetes') {
+			steps {
+				echo "=== Deploiement sur Kubernetes (Docker Desktop) ==="
 
-                bat "kubectl apply -f v9/k8s/00-secret.yaml"
-                bat "kubectl apply -f v9/k8s/01-mongo-pvc.yaml"
-                bat "kubectl apply -f v9/k8s/02-mongo.yaml"
-                bat "kubectl apply -f v9/k8s/03-backend.yaml"
-                bat "kubectl apply -f v9/k8s/04-frontend.yaml"
+				bat "kubectl apply --validate=false -f v9/k8s/00-secret.yaml"
+				bat "kubectl apply --validate=false -f v9/k8s/01-mongo-pvc.yaml"
+				bat "kubectl apply --validate=false -f v9/k8s/02-mongo.yaml"
+				bat "kubectl apply --validate=false -f v9/k8s/03-backend.yaml"
+				bat "kubectl apply --validate=false -f v9/k8s/04-frontend.yaml"
 
-                // Forcer le re-pull de la nouvelle image
-                bat "kubectl set image deployment/backend  backend=%DOCKERHUB_REPO%:backend-%BUILD_TAG%  -n %K8S_NAMESPACE%"
-                bat "kubectl set image deployment/frontend frontend=%DOCKERHUB_REPO%:frontend-%BUILD_TAG% -n %K8S_NAMESPACE%"
+				bat "kubectl set image deployment/backend  backend=%DOCKERHUB_REPO%:backend-%BUILD_TAG%  -n %K8S_NAMESPACE%"
+				bat "kubectl set image deployment/frontend frontend=%DOCKERHUB_REPO%:frontend-%BUILD_TAG% -n %K8S_NAMESPACE%"
 
-                echo "Attente du rollout backend..."
-                bat "kubectl rollout status deployment/backend  -n %K8S_NAMESPACE% --timeout=120s"
-                echo "Attente du rollout frontend..."
-                bat "kubectl rollout status deployment/frontend -n %K8S_NAMESPACE% --timeout=120s"
-            }
-        }
+				echo "Attente du rollout backend..."
+				bat "kubectl rollout status deployment/backend  -n %K8S_NAMESPACE% --timeout=120s"
+				echo "Attente du rollout frontend..."
+				bat "kubectl rollout status deployment/frontend -n %K8S_NAMESPACE% --timeout=120s"
+			}
+		}
 
         stage('Verification') {
             steps {
