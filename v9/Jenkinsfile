@@ -8,6 +8,7 @@ pipeline {
         SONAR_SCANNER     = 'C:\\Users\\Soni-info Tech\\sonar-scanner\\bin\\sonar-scanner.bat'
         SONAR_HOST_URL    = 'http://localhost:9000'
         SONAR_PROJECT_KEY = 'portfolio-siakha-kaba'
+		KUBECONFIG 		  = "C:\\ProgramData\\Jenkins\\.jenkins\\.kube\\config"
         K8S_NAMESPACE     = 'default'
     }
 
