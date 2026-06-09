@@ -78,9 +78,7 @@ pipeline {
         stage('Push Docker Hub') {
             steps {
                 echo "=== Push des images vers Docker Hub ==="
-                bat "docker push %DOCKERHUB_REPO%:backend-%BUILD_TAG%"
                 bat "docker push %DOCKERHUB_REPO%:backend-latest"
-                bat "docker push %DOCKERHUB_REPO%:frontend-%BUILD_TAG%"
                 bat "docker push %DOCKERHUB_REPO%:frontend-latest"
                 echo "Images pushees avec succes !"
                 bat "docker logout"
