@@ -27,7 +27,7 @@ resource "kubernetes_deployment" "backend" {
       spec {
         container {
           name              = "backend"
-          image             = "${var.dockerhub_repo}:backend-${var.backend_image_tag}"
+          image             = "${var.dockerhub_repo}:backend-latest"
           image_pull_policy = "Always"
 
           port {
