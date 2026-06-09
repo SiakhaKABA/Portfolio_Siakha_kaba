@@ -87,6 +87,8 @@ pipeline {
                 echo "=== Push des images vers Docker Hub ==="
                 bat "docker push %DOCKERHUB_REPO%:backend-latest"
                 bat "docker push %DOCKERHUB_REPO%:frontend-latest"
+                bat "docker push %DOCKERHUB_REPO%:backend-%BUILD_TAG%"
+                bat "docker push %DOCKERHUB_REPO%:frontend-%BUILD_TAG%"
                 echo "Images pushees avec succes !"
                 bat "docker logout"
             }
