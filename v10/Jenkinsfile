@@ -38,6 +38,7 @@ pipeline {
                     withSonarQubeEnv('SonarQube') {
                         bat '''"%SONAR_SCANNER%" ^
                             -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
+                            -Dsonar.host.url=%SONAR_HOST_URL% ^
                             -Dsonar.sources=backend,frontend/src ^
                             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
                             -Dsonar.sourceEncoding=UTF-8'''
