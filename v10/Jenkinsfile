@@ -39,13 +39,14 @@ pipeline {
                     // On force le bon port (9100) et on ajoute le token d'authentification
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                         withSonarQubeEnv('SonarQube') {
-                            bat '''"%SONAR_SCANNER%" ^
+                            bat """"%SONAR_SCANNER%" ^
                                 -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
                                 -Dsonar.sources=backend,frontend/src ^
                                 -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
                                 -Dsonar.sourceEncoding=UTF-8 ^
                                 -Dsonar.host.url=http://localhost:9100 ^
-                                -Dsonar.token=%SONAR_TOKEN%'''
+                                "-Dsonar.token=%SONAR_TOKEN%"
+                            """
                         }
                     }
                 }
