@@ -35,13 +35,15 @@ pipeline {
             steps {
                 echo "=== Analyse de la qualite du code avec SonarQube ==="
                 dir('v10') {
+                    // Note: withSonarQubeEnv injecte SONAR_HOST_URL mais avec le mauvais port (9000)
+                    // On force le bon port (9100) en mettant -Dsonar.host.url en dernier
                     withSonarQubeEnv('SonarQube') {
                         bat '''"%SONAR_SCANNER%" ^
                             -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
-                            -Dsonar.host.url=%SONAR_HOST_URL% ^
                             -Dsonar.sources=backend,frontend/src ^
                             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
-                            -Dsonar.sourceEncoding=UTF-8'''
+                            -Dsonar.sourceEncoding=UTF-8 ^
+                            -Dsonar.host.url=http://localhost:9100'''
                     }
                 }
                 echo "Analyse SonarQube terminee"
