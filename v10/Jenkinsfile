@@ -6,7 +6,7 @@ pipeline {
         DOCKERHUB_REPO    = 'siakhakaba19/portfolio'
         BUILD_TAG         = "${env.BUILD_NUMBER}"
         SONAR_SCANNER     = 'C:\\Users\\Soni-info Tech\\sonar-scanner\\bin\\sonar-scanner.bat'
-        SONAR_HOST_URL    = 'http://localhost:9100'
+        SONAR_HOST_URL    = 'http://localhost:9000'
         SONAR_PROJECT_KEY = 'Portfolio-Siakha-KABA'
         KUBECONFIG        = "C:\\ProgramData\\Jenkins\\.jenkins\\.kube\\config"
         K8S_NAMESPACE     = 'default'
@@ -36,7 +36,7 @@ pipeline {
                 echo "=== Analyse de la qualite du code avec SonarQube ==="
                 dir('v10') {
                     // Note: withSonarQubeEnv injecte SONAR_HOST_URL mais avec le mauvais port (9000)
-                    // On force le bon port (9100) et on ajoute le token d'authentification
+                    // On force le bon port (9000) et on ajoute le token d'authentification
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                         withSonarQubeEnv('SonarQube') {
                             bat """"%SONAR_SCANNER%" ^
@@ -44,7 +44,7 @@ pipeline {
                                 -Dsonar.sources=backend,frontend/src ^
                                 -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
                                 -Dsonar.sourceEncoding=UTF-8 ^
-                                -Dsonar.host.url=http://localhost:9100 ^
+                                -Dsonar.host.url=http://localhost:9000 ^
                                 "-Dsonar.token=%SONAR_TOKEN%"
                             """
                         }
@@ -98,7 +98,7 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 echo "=== Initialisation Terraform ==="
-                dir("${env.WORKSPACE}\\${env.TF_DIR}") {
+                dir("${env.WORKSPACE}\\${env.TF  _DIR}") {
                     withCredentials([
                         string(credentialsId: 'tf-admin-password-hash', variable: 'TF_VAR_admin_password_hash'),
                         string(credentialsId: 'tf-jwt-secret',           variable: 'TF_VAR_jwt_secret')
