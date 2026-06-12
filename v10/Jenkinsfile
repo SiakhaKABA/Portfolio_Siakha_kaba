@@ -98,7 +98,7 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 echo "=== Initialisation Terraform ==="
-                dir("${env.WORKSPACE}\\${env.TF  _DIR}") {
+                dir("${env.WORKSPACE}\\${env.TF_DIR}") {
                     withCredentials([
                         string(credentialsId: 'tf-admin-password-hash', variable: 'TF_VAR_admin_password_hash'),
                         string(credentialsId: 'tf-jwt-secret',           variable: 'TF_VAR_jwt_secret')
