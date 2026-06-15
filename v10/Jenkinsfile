@@ -88,15 +88,6 @@ pipeline {
         }
 
         // ── TERRAFORM IaC ─────────────────────────────────────────────────────
-        stage('Configure Kubernetes') {
-            steps {
-                echo "=== Configuration du contexte Kubernetes ==="
-                bat 'kubectl config use-context docker-desktop'
-                bat 'kubectl cluster-info'
-                bat 'kubectl get nodes'
-            }
-        }
-
         stage('Terraform Init') {
             steps {
                 echo "=== Initialisation Terraform ==="
