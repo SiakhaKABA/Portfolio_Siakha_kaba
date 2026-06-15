@@ -1,7 +1,7 @@
 variable "kubeconfig_path" {
   description = "Chemin vers le fichier kubeconfig"
   type        = string
-  default     = "C:\\Users\\Soni-info Tech\\.kube\\config"
+  default     = "C:\\ProgramData\\Jenkins\\.jenkins\\.kube\\config"
 }
 
 variable "kube_context" {
