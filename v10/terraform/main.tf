@@ -18,4 +18,7 @@ terraform {
 provider "kubernetes" {
   config_path    = var.kubeconfig_path
   config_context = var.kube_context
+
+  # Skip TLS verification for Docker Desktop (self-signed cert)
+  insecure = true
 }
