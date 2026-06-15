@@ -8,7 +8,7 @@ pipeline {
         SONAR_SCANNER     = 'C:\\Users\\Soni-info Tech\\sonar-scanner\\bin\\sonar-scanner.bat'
         SONAR_HOST_URL    = 'http://localhost:9000'
         SONAR_PROJECT_KEY = 'Portfolio-Siakha-KABA'
-        KUBECONFIG        = "C:\\ProgramData\\Jenkins\\.jenkins\\.kube\\config"
+        KUBECONFIG        = "C:\\Users\\Soni-info Tech\\.kube\\config"
         K8S_NAMESPACE     = 'default'
         TF_DIR            = "v10\\terraform"
         TF_STATE_DIR      = "C:\\ProgramData\\Jenkins\\.jenkins\\terraform-states\\portfolio"
