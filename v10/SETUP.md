@@ -215,26 +215,19 @@ v10/
 ├── docker-compose.yml             ← Développement local
 ├── docker-compose.prod.yml        ← Production locale
 ├── sonar-project.properties
+├── setup-jenkins-kubeconfig.ps1   ← Config kubeconfig pour Jenkins
 │
 ├── backend/                       ← API Node.js
 ├── frontend/                      ← App React
 │
-├── k8s/                           ← Manifestes YAML (référence)
-│   ├── 00-secret.yaml
-│   ├── 01-mongo-pvc.yaml
-│   ├── 02-mongo.yaml
-│   ├── 03-backend.yaml
-│   └── 04-frontend.yaml
-│
-├── terraform/                     ← IaC Terraform (actif)
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── terraform.tfvars
-│   ├── secret.tf
-│   ├── mongo.tf
-│   ├── backend.tf
-│   ├── frontend.tf
-│   ├── outputs.tf
+├── terraform/                     ← IaC - Gère TOUTE l'infra Kubernetes
+│   ├── main.tf                    ← Configuration provider Kubernetes
+│   ├── variables.tf               ← Variables paramétrables
+│   ├── secret.tf                  ← Secret Kubernetes (credentials)
+│   ├── mongo.tf                   ← MongoDB (PVC + Deployment + Service)
+│   ├── backend.tf                 ← Backend (Deployment + Service)
+│   ├── frontend.tf                ← Frontend (Deployment + Service NodePort)
+│   ├── outputs.tf                 ← Outputs (URLs, images déployées)
 │   └── README.md
 │
 └── scripts/                       ← Utilitaires Windows
@@ -244,3 +237,6 @@ v10/
     ├── rollback.ps1               ← Rollback vers un build
     └── destroy.ps1                ← Suppression de l'infra
 ```
+
+**Note importante :** Terraform gère TOUTE la configuration Kubernetes de façon déclarative. 
+Il n'y a pas de dossier k8s/ avec des manifests YAML manuels - tout est défini dans les fichiers .tf

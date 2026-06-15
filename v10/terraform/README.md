@@ -3,6 +3,9 @@
 Ce dossier contient l'infrastructure as code (IaC) Terraform pour déployer
 le projet PortfolioSonar sur Kubernetes (Docker Desktop).
 
+**⚠️ SOURCE DE VÉRITÉ UNIQUE :** Toute la configuration Kubernetes est gérée ici.
+Il n'existe pas de manifests YAML manuels (k8s/) - Terraform gère tout de façon déclarative.
+
 ## Structure
 
 ```
