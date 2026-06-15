@@ -27,7 +27,7 @@ resource "kubernetes_deployment" "frontend" {
       spec {
         container {
           name              = "frontend"
-          image             = "${var.dockerhub_repo}:frontend-latest"
+          image             = "${var.dockerhub_repo}:frontend-${var.frontend_image_tag}"
           image_pull_policy = "Always"
 
           port {

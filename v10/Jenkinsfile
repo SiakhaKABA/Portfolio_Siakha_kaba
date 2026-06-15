@@ -7,7 +7,7 @@ pipeline {
         BUILD_TAG         = "${env.BUILD_NUMBER}"
         SONAR_SCANNER     = 'C:\\Users\\Soni-info Tech\\sonar-scanner\\bin\\sonar-scanner.bat'
         SONAR_HOST_URL    = 'http://localhost:9000'
-        SONAR_PROJECT_KEY = 'Portfolio-Siakha-KABA'
+        SONAR_PROJECT_KEY = 'portfolio-siakha-kaba'
         KUBECONFIG        = "C:\\ProgramData\\Jenkins\\.jenkins\\.kube\\config"
         K8S_NAMESPACE     = 'default'
         TF_DIR            = "v10\\terraform"
@@ -35,19 +35,12 @@ pipeline {
             steps {
                 echo "=== Analyse de la qualite du code avec SonarQube ==="
                 dir('v10') {
-                    // Note: withSonarQubeEnv injecte SONAR_HOST_URL mais avec le mauvais port (9000)
-                    // On force le bon port (9000) et on ajoute le token d'authentification
-                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
-                        withSonarQubeEnv('SonarQube') {
-                            bat """"%SONAR_SCANNER%" ^
-                                -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
-                                -Dsonar.sources=backend,frontend/src ^
-                                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
-                                -Dsonar.sourceEncoding=UTF-8 ^
-                                -Dsonar.host.url=http://localhost:9000 ^
-                                "-Dsonar.token=%SONAR_TOKEN%"
-                            """
-                        }
+                    withSonarQubeEnv('SonarQube') {
+                        bat '''"%SONAR_SCANNER%" ^
+                            -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
+                            -Dsonar.sources=backend,frontend/src ^
+                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
+                            -Dsonar.sourceEncoding=UTF-8'''
                     }
                 }
                 echo "Analyse SonarQube terminee"
@@ -85,25 +78,16 @@ pipeline {
         stage('Push Docker Hub') {
             steps {
                 echo "=== Push des images vers Docker Hub ==="
-                bat "docker push %DOCKERHUB_REPO%:backend-latest"
-                bat "docker push %DOCKERHUB_REPO%:frontend-latest"
                 bat "docker push %DOCKERHUB_REPO%:backend-%BUILD_TAG%"
+                bat "docker push %DOCKERHUB_REPO%:backend-latest"
                 bat "docker push %DOCKERHUB_REPO%:frontend-%BUILD_TAG%"
+                bat "docker push %DOCKERHUB_REPO%:frontend-latest"
                 echo "Images pushees avec succes !"
                 bat "docker logout"
             }
         }
 
         // ── TERRAFORM IaC ─────────────────────────────────────────────────────
-        stage('Configure Kubernetes') {
-            steps {
-                echo "=== Configuration du contexte Kubernetes ==="
-                bat 'kubectl config use-context docker-desktop'
-                bat 'kubectl cluster-info'
-                bat 'kubectl get nodes'
-            }
-        }
-
         stage('Terraform Init') {
             steps {
                 echo "=== Initialisation Terraform ==="

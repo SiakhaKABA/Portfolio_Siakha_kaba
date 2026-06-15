@@ -7,7 +7,7 @@ resource "kubernetes_secret" "portfolio_secret" {
 
   type = "Opaque"
 
-  data = {
+  string_data = {
     ADMIN_PASSWORD_HASH = var.admin_password_hash
     JWT_SECRET          = var.jwt_secret
   }
