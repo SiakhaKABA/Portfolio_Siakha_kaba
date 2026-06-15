@@ -55,42 +55,39 @@ kubectl get nodes
 
 ## Étape 1 — Installer Terraform
 
-Ouvrir PowerShell **en tant qu'Administrateur** et exécuter :
+**Télécharger Terraform :**
+- https://developer.hashicorp.com/terraform/downloads
+- Extraire dans `C:\Program Files\Terraform\`
+- Ajouter au PATH Windows
 
-```powershell
-cd v10
-.\scripts\install-terraform.ps1
-```
-
-Vérifier l'installation :
+**Vérifier l'installation :**
 
 ```powershell
 terraform version
-# Terraform v1.8.4
+# Terraform v1.8.4 ou supérieur
 ```
 
 ---
 
 ## Étape 2 — Vérifier l'environnement
 
-```powershell
-cd v10
-.\scripts\validate-setup.ps1
-```
+**Vérifier que tout est prêt :**
 
-Tous les `[OK]` doivent être verts avant de continuer.
+```powershell
+# Docker Desktop avec Kubernetes activé
+docker version
+kubectl version
+
+# Terraform installé
+terraform version
+
+# Jenkins accessible
+# http://localhost:8080
+```
 
 ---
 
 ## Étape 3 — Créer les credentials Jenkins
-
-### Option A — Script automatique
-
-```powershell
-.\scripts\setup-jenkins-credentials.ps1 -JenkinsUser admin
-```
-
-### Option B — Interface Jenkins (manuel)
 
 Aller dans **Jenkins → Manage Jenkins → Credentials → System → Global**
 
@@ -177,12 +174,7 @@ copy "C:\ProgramData\Jenkins\.jenkins\terraform-states\portfolio\terraform.tfsta
 
 ## Rollback vers un build précédent
 
-```powershell
-cd v10
-.\scripts\rollback.ps1 -BuildTag 42
-```
-
-Ou rollback Kubernetes natif (sans Terraform) :
+Rollback Kubernetes natif :
 
 ```powershell
 kubectl rollout undo deployment/backend  -n default
@@ -194,9 +186,8 @@ kubectl rollout undo deployment/frontend -n default
 ## Détruire toute l'infrastructure
 
 ```powershell
-cd v10
-.\scripts\destroy.ps1
-# Taper DESTROY pour confirmer
+cd v10\terraform
+terraform destroy -auto-approve
 ```
 
 ---
@@ -239,29 +230,27 @@ v10/
 ├── Jenkinsfile                    ← Pipeline CI/CD complet
 ├── .gitignore
 ├── docker-compose.yml             ← Développement local
-├── docker-compose.prod.yml        ← Production locale
 ├── sonar-project.properties
 ├── KUBECONFIG-SETUP.md            ← Guide config kubeconfig Jenkins
+├── SETUP.md                       ← Guide d'installation
+├── LINKEDIN-POST.md               ← Posts LinkedIn pour le projet
 │
 ├── backend/                       ← API Node.js
+│   ├── .env.example               ← Template variables d'environnement
+│   └── ...
+│
 ├── frontend/                      ← App React
+│   └── ...
 │
-├── terraform/                     ← IaC - Gère TOUTE l'infra Kubernetes
-│   ├── main.tf                    ← Configuration provider Kubernetes
-│   ├── variables.tf               ← Variables paramétrables
-│   ├── secret.tf                  ← Secret Kubernetes (credentials)
-│   ├── mongo.tf                   ← MongoDB (PVC + Deployment + Service)
-│   ├── backend.tf                 ← Backend (Deployment + Service)
-│   ├── frontend.tf                ← Frontend (Deployment + Service NodePort)
-│   ├── outputs.tf                 ← Outputs (URLs, images déployées)
-│   └── README.md
-│
-└── scripts/                       ← Utilitaires Windows
-    ├── install-terraform.ps1      ← Installation Terraform
-    ├── validate-setup.ps1         ← Validation avant 1er build
-    ├── setup-jenkins-credentials.ps1
-    ├── rollback.ps1               ← Rollback vers un build
-    └── destroy.ps1                ← Suppression de l'infra
+└── terraform/                     ← IaC - Gère TOUTE l'infra Kubernetes
+    ├── main.tf                    ← Configuration provider Kubernetes
+    ├── variables.tf               ← Variables paramétrables
+    ├── secret.tf                  ← Secret Kubernetes (credentials)
+    ├── mongo.tf                   ← MongoDB (PVC + Deployment + Service)
+    ├── backend.tf                 ← Backend (Deployment + Service)
+    ├── frontend.tf                ← Frontend (Deployment + Service NodePort)
+    ├── outputs.tf                 ← Outputs (URLs, images déployées)
+    └── README.md
 ```
 
 **Note importante :** Terraform gère TOUTE la configuration Kubernetes de façon déclarative. 
