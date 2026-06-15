@@ -27,6 +27,32 @@ Docker Desktop Kubernetes
 
 ---
 
+## Étape 0 — Configurer Kubeconfig pour Jenkins
+
+Jenkins a besoin d'un kubeconfig propre avec uniquement le contexte `docker-desktop`.
+
+**Créer le kubeconfig :**
+
+```bash
+# Créer le répertoire
+mkdir C:\ProgramData\Jenkins\.jenkins\.kube
+
+# Extraire uniquement docker-desktop
+kubectl config view --minify --flatten --context=docker-desktop > C:\ProgramData\Jenkins\.jenkins\.kube\config
+```
+
+**Vérifier :**
+
+```bash
+set KUBECONFIG=C:\ProgramData\Jenkins\.jenkins\.kube\config
+kubectl cluster-info
+kubectl get nodes
+```
+
+> 📖 Voir [KUBECONFIG-SETUP.md](KUBECONFIG-SETUP.md) pour plus de détails.
+
+---
+
 ## Étape 1 — Installer Terraform
 
 Ouvrir PowerShell **en tant qu'Administrateur** et exécuter :
@@ -215,7 +241,7 @@ v10/
 ├── docker-compose.yml             ← Développement local
 ├── docker-compose.prod.yml        ← Production locale
 ├── sonar-project.properties
-├── setup-jenkins-kubeconfig.ps1   ← Config kubeconfig pour Jenkins
+├── KUBECONFIG-SETUP.md            ← Guide config kubeconfig Jenkins
 │
 ├── backend/                       ← API Node.js
 ├── frontend/                      ← App React
