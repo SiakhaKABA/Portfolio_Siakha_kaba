@@ -54,11 +54,20 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-                echo "=== Construction des images Docker (target prod) ==="
-                bat "docker build -t %DOCKERHUB_REPO%:backend-%BUILD_TAG%  -t %DOCKERHUB_REPO%:backend-latest  v10/backend  --target prod"
-                bat "docker build -t %DOCKERHUB_REPO%:frontend-%BUILD_TAG% -t %DOCKERHUB_REPO%:frontend-latest v10/frontend --target prod"
+        stage('Build Images Docker') {
+            parallel {
+                stage('Build Backend') {
+                    steps {
+                        echo "=== Construction image Docker Backend (target prod) ==="
+                        bat "docker build -t %DOCKERHUB_REPO%:backend-%BUILD_TAG% -t %DOCKERHUB_REPO%:backend-latest v10/backend --target prod"
+                    }
+                }
+                stage('Build Frontend') {
+                    steps {
+                        echo "=== Construction image Docker Frontend (target prod) ==="
+                        bat "docker build -t %DOCKERHUB_REPO%:frontend-%BUILD_TAG% -t %DOCKERHUB_REPO%:frontend-latest v10/frontend --target prod"
+                    }
+                }
             }
         }
 
@@ -76,14 +85,29 @@ pipeline {
         }
 
         stage('Push Docker Hub') {
-            steps {
-                echo "=== Push des images vers Docker Hub ==="
-                bat "docker push %DOCKERHUB_REPO%:backend-%BUILD_TAG%"
-                bat "docker push %DOCKERHUB_REPO%:backend-latest"
-                bat "docker push %DOCKERHUB_REPO%:frontend-%BUILD_TAG%"
-                bat "docker push %DOCKERHUB_REPO%:frontend-latest"
-                echo "Images pushees avec succes !"
-                bat "docker logout"
+            parallel {
+                stage('Push Backend') {
+                    steps {
+                        echo "=== Push images Backend vers Docker Hub ==="
+                        bat "docker push %DOCKERHUB_REPO%:backend-%BUILD_TAG%"
+                        bat "docker push %DOCKERHUB_REPO%:backend-latest"
+                    }
+                }
+                stage('Push Frontend') {
+                    steps {
+                        echo "=== Push images Frontend vers Docker Hub ==="
+                        bat "docker push %DOCKERHUB_REPO%:frontend-%BUILD_TAG%"
+                        bat "docker push %DOCKERHUB_REPO%:frontend-latest"
+                    }
+                }
+            }
+            post {
+                always {
+                    script {
+                        echo "Images pushees avec succes !"
+                        bat "docker logout"
+                    }
+                }
             }
         }
 
