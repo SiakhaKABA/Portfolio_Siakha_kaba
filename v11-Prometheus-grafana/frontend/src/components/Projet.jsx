@@ -1,4 +1,5 @@
 export default function Projet({ projet, index, isAdmin, onView, onEdit, onDelete }) {
+  const { image, libelle, categorie, github, rapport, technologies, description } = projet
   return (
     <article
       className="card overflow-hidden flex flex-col group hover:border-white/10 transition-all animate-slide-up"
@@ -6,8 +7,8 @@ export default function Projet({ projet, index, isAdmin, onView, onEdit, onDelet
     >
       {/* Image */}
       <div className="relative h-40 sm:h-44 bg-slate-900 flex-shrink-0 overflow-hidden">
-        {projet.image ? (
-          <img src={projet.image} alt={projet.libelle}
+        {image ? (
+          <img src={image} alt={libelle}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
             onError={e => e.target.style.display = 'none'} />
         ) : (
@@ -17,20 +18,20 @@ export default function Projet({ projet, index, isAdmin, onView, onEdit, onDelet
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
 
-        {projet.categorie && (
+        {categorie && (
           <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-slate-900/90 border border-white/10 text-xs font-mono text-teal-400">
-            {projet.categorie}
+            {categorie}
           </div>
         )}
 
-        {projet.github && (
-          <a href={projet.github} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
+        {github && (
+          <a href={github} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
             className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-900/90 border border-white/10 hover:border-teal-400/40 text-xs font-mono text-slate-300 hover:text-teal-400 transition-all">
             <i className="fab fa-github" />GitHub
           </a>
         )}
-        {!projet.github && projet.rapport && (
-          <a href={projet.rapport} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
+        {!github && rapport && (
+          <a href={rapport} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
             className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-900/90 border border-white/10 hover:border-red-400/40 text-xs font-mono text-slate-300 hover:text-red-400 transition-all">
             <i className="fas fa-file-pdf" />Rapport
           </a>
@@ -41,14 +42,14 @@ export default function Projet({ projet, index, isAdmin, onView, onEdit, onDelet
       <div className="p-4 sm:p-5 flex flex-col flex-grow">
         <button onClick={onView}
           className="text-left font-display font-bold text-white hover:text-teal-400 transition-colors text-sm sm:text-base leading-snug mb-2 line-clamp-2">
-          {projet.libelle}
+          {libelle}
         </button>
-        <p className="text-slate-500 text-xs leading-relaxed line-clamp-3 mb-3 flex-grow">{projet.description}</p>
+        <p className="text-slate-500 text-xs leading-relaxed line-clamp-3 mb-3 flex-grow">{description}</p>
 
-        {projet.technologies?.length > 0 && (
+        {technologies?.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
-            {projet.technologies.slice(0, 4).map(t => <span key={t} className="tech-badge">{t}</span>)}
-            {projet.technologies.length > 4 && <span className="tech-badge text-slate-500">+{projet.technologies.length - 4}</span>}
+            {technologies.slice(0, 4).map(t => <span key={t} className="tech-badge">{t}</span>)}
+            {technologies.length > 4 && <span className="tech-badge text-slate-500">+{technologies.length - 4}</span>}
           </div>
         )}
 
