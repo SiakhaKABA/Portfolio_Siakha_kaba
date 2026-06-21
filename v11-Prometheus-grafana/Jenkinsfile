@@ -37,14 +37,16 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo "=== Analyse de la qualite du code avec SonarQube ==="
-                dir('v11-Prometheus-grafana') {
-                    bat '''"%SONAR_SCANNER%" ^
-                        -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
-                        -Dsonar.sources=backend,frontend/src ^
-                        -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
-                        -Dsonar.sourceEncoding=UTF-8 ^
-                        -Dsonar.host.url=%SONAR_HOST_URL% ^
-                        -Dsonar.token=sqp_3fe46f2794f42000d10c3126669f12798b41eb46'''
+                withSonarQubeEnv('SonarQube') {
+                    dir('v11-Prometheus-grafana') {
+                        bat '''"%SONAR_SCANNER%" ^
+                            -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
+                            -Dsonar.sources=backend,frontend/src ^
+                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
+                            -Dsonar.sourceEncoding=UTF-8 ^
+                            -Dsonar.host.url=%SONAR_HOST_URL% ^
+                            -Dsonar.token=sqp_3fe46f2794f42000d10c3126669f12798b41eb46'''
+                    }
                 }
                 echo "Analyse SonarQube terminee"
             }
@@ -54,13 +56,8 @@ pipeline {
             steps {
                 echo "=== Verification du Quality Gate SonarQube ==="
                 echo "Dashboard : ${SONAR_HOST_URL}/dashboard?id=${SONAR_PROJECT_KEY}"
-                script {
-                    def status = bat(script: "curl -s -u admin:aws123@Sia12 \"http://localhost:9000/api/qualitygates/project_status?projectKey=%SONAR_PROJECT_KEY%\"", returnStdout: true).trim()
-                    if (status.contains('"status":"ERROR"')) {
-                        echo "⚠️ Quality Gate FAILED - voir dashboard SonarQube"
-                    } else {
-                        echo "✅ Quality Gate PASSED"
-                    }
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: false
                 }
             }
         }

@@ -24,6 +24,10 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'backend-local'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'portfolio_backend_.*'
+        action: keep
 
   - job_name: 'mongodb'
     static_configs:
@@ -52,6 +56,10 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'jenkins-local'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'jenkins_.*'
+        action: keep
 
   - job_name: 'sonarqube'
     metrics_path: /metrics
@@ -59,6 +67,10 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'sonarqube-local'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'sonarqube_.*'
+        action: keep
 
   - job_name: 'github'
     metrics_path: /metrics
@@ -66,6 +78,10 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'github'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'github_.*'
+        action: keep
 
   - job_name: 'kube-state-metrics'
     metrics_path: /metrics
@@ -73,6 +89,10 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'kubernetes'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'kube_.*|container_.*|docker_.*'
+        action: keep
 
   - job_name: 'terraform'
     metrics_path: /metrics
@@ -80,10 +100,19 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'terraform'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'terraform_.*'
+        action: keep
 
   - job_name: 'blackbox-http'
     metrics_path: /metrics
+    honor_labels: true
     static_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'blackbox'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'probe_.*'
+        action: keep

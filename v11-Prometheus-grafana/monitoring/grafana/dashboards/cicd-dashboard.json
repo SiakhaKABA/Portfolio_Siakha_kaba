@@ -480,17 +480,95 @@
       "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
     },
     {
+      "id": 105,
+      "title": "--- DOCKER CONTAINERS ---",
+      "type": "text",
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 44 },
+      "options": { "content": "## Docker Containers", "mode": "markdown" }
+    },
+    {
+      "id": 28,
+      "title": "Containers Running",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 46 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "docker_containers_total{state=\"running\"}",
+          "legendFormat": "Running"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "yellow", "value": 5 }, { "color": "green", "value": 8 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 29,
+      "title": "Containers Stopped",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 46 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "docker_containers_total{state=\"stopped\"}",
+          "legendFormat": "Stopped"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 2 }, { "color": "red", "value": 5 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 30,
+      "title": "Docker Containers actifs",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 16, "x": 8, "y": 46 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "docker_container_running == 1",
+          "legendFormat": "{{ name }}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "name" }, "properties": [{ "id": "displayName", "value": "Container" }] },
+          { "matcher": { "id": "byName", "options": "image" }, "properties": [{ "id": "displayName", "value": "Image" }] },
+          { "matcher": { "id": "byName", "options": "status" }, "properties": [{ "id": "displayName", "value": "Status" }] },
+          { "matcher": { "id": "byName", "options": "Value" }, "properties": [{ "id": "custom.hidden", "value": true }] },
+          { "matcher": { "id": "byName", "options": "Time" }, "properties": [{ "id": "custom.hidden", "value": true }] },
+          { "matcher": { "id": "byName", "options": "__name__" }, "properties": [{ "id": "custom.hidden", "value": true }] },
+          { "matcher": { "id": "byName", "options": "instance" }, "properties": [{ "id": "custom.hidden", "value": true }] },
+          { "matcher": { "id": "byName", "options": "job" }, "properties": [{ "id": "custom.hidden", "value": true }] }
+        ]
+      },
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Time": true, "Value": true, "__name__": true, "instance": true, "job": true }, "indexByName": { "name": 0, "image": 1, "status": 2 } } }
+      ]
+    },
+    {
       "id": 104,
       "title": "--- TERRAFORM / INFRASTRUCTURE ---",
       "type": "text",
-      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 44 },
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 55 },
       "options": { "content": "## Terraform & Health Checks Infrastructure", "mode": "markdown" }
     },
     {
       "id": 24,
       "title": "Services Infrastructure - Health",
       "type": "table",
-      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 46 },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 57 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         {
@@ -511,7 +589,7 @@
       "id": 25,
       "title": "Probe Duration (latence services)",
       "type": "timeseries",
-      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 46 },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 57 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         {
@@ -525,7 +603,7 @@
       "id": 26,
       "title": "Deployments disponibles apres Terraform Apply",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 52 },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 63 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         {
@@ -544,7 +622,7 @@
       "id": 27,
       "title": "Jenkins Terraform Jobs",
       "type": "timeseries",
-      "gridPos": { "h": 6, "w": 12, "x": 6, "y": 52 },
+      "gridPos": { "h": 6, "w": 12, "x": 6, "y": 63 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         {
