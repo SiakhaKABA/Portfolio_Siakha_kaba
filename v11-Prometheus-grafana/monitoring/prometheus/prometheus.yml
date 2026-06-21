@@ -21,7 +21,9 @@ scrape_configs:
   - job_name: 'portfolio-backend'
     metrics_path: /metrics
     static_configs:
-      - targets: ['portfolio-backend:3001']
+      - targets: ['metrics-simulator:9999']
+        labels:
+          instance: 'backend-local'
 
   - job_name: 'mongodb'
     static_configs:
@@ -50,10 +52,6 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'jenkins-local'
-    metric_relabel_configs:
-      - source_labels: [__name__]
-        regex: '(up|jenkins_.*)'
-        action: keep
 
   - job_name: 'sonarqube'
     metrics_path: /metrics
@@ -61,10 +59,6 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'sonarqube-local'
-    metric_relabel_configs:
-      - source_labels: [__name__]
-        regex: '(up|sonarqube_.*)'
-        action: keep
 
   - job_name: 'github'
     metrics_path: /metrics
@@ -72,10 +66,6 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'github'
-    metric_relabel_configs:
-      - source_labels: [__name__]
-        regex: '(up|github_.*)'
-        action: keep
 
   - job_name: 'kube-state-metrics'
     metrics_path: /metrics
@@ -83,10 +73,6 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'kubernetes'
-    metric_relabel_configs:
-      - source_labels: [__name__]
-        regex: '(up|kube_.*)'
-        action: keep
 
   - job_name: 'terraform'
     metrics_path: /metrics
@@ -94,10 +80,6 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'terraform'
-    metric_relabel_configs:
-      - source_labels: [__name__]
-        regex: '(up|terraform_.*)'
-        action: keep
 
   - job_name: 'blackbox-http'
     metrics_path: /metrics
@@ -105,32 +87,3 @@ scrape_configs:
       - targets: ['metrics-simulator:9999']
         labels:
           instance: 'blackbox'
-    metric_relabel_configs:
-      - source_labels: [__name__]
-        regex: '(up|probe_.*|pipeline_.*)'
-        action: keep
-
-  # ── Real services (backup, via host network) ─────────────
-  - job_name: 'jenkins-real'
-    metrics_path: /prometheus/
-    static_configs:
-      - targets: ['host.docker.internal:8080']
-        labels:
-          instance: 'jenkins-host'
-
-  - job_name: 'sonarqube-real'
-    metrics_path: /api/monitoring/metrics
-    static_configs:
-      - targets: ['host.docker.internal:9000']
-        labels:
-          instance: 'sonarqube-host'
-
-  - job_name: 'kubernetes-apiservers'
-    scheme: https
-    tls_config:
-      insecure_skip_verify: true
-    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-    static_configs:
-      - targets: ['host.docker.internal:6443']
-        labels:
-          instance: 'k8s-local'
