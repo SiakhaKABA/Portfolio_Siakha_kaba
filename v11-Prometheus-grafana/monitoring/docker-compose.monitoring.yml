@@ -142,6 +142,16 @@ services:
       - portfolio-network
     restart: unless-stopped
 
+  # ── Metrics Simulator (port 9999) ────────────────────────
+  metrics-simulator:
+    build: ./metrics-simulator
+    container_name: portfolio-metrics-simulator
+    ports:
+      - "9999:9999"
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
   # ── Kube State Metrics (port 8081) ─────────────────────
   kube-state-metrics:
     image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.10.1

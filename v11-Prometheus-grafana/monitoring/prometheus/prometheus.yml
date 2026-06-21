@@ -43,6 +43,13 @@ scrape_configs:
     static_configs:
       - targets: ['grafana:3000']
 
+  # ── Metrics Simulator (CI/CD) ─────────────────────────────
+  - job_name: 'cicd-simulator'
+    static_configs:
+      - targets: ['metrics-simulator:9999']
+        labels:
+          instance: 'simulator'
+
   # ── Jenkins ──────────────────────────────────────────────
   - job_name: 'jenkins'
     metrics_path: /prometheus/
