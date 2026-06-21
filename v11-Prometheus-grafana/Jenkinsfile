@@ -37,6 +37,9 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo "=== Analyse de la qualite du code avec SonarQube ==="
+                dir('v11-Prometheus-grafana') {
+                    bat 'if exist ".scannerwork" rmdir /s /q ".scannerwork"'
+                }
                 withSonarQubeEnv(credentialsId: 'sonarqube-token', installationName: 'SonarQube') {
                     dir('v11-Prometheus-grafana') {
                         bat '''"%SONAR_SCANNER%" ^
@@ -54,7 +57,8 @@ pipeline {
             steps {
                 echo "=== Verification du Quality Gate SonarQube ==="
                 echo "Dashboard : ${SONAR_HOST_URL}/dashboard?id=${SONAR_PROJECT_KEY}"
-                timeout(time: 2, unit: 'MINUTES') {
+                sleep(time: 10, unit: 'SECONDS')
+                timeout(time: 5, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: false
                 }
             }
