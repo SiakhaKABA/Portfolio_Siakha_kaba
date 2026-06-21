@@ -14,7 +14,7 @@ COPY tailwind.config.js ./
 COPY postcss.config.js ./
 COPY src ./src
 
-EXPOSE 5173
+EXPOSE 8080
 CMD ["npm", "run", "dev", "--", "--host"]
 
 
