@@ -1,0 +1,35 @@
+# ── Node.js ──────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+dist/
+build/
+
+# ── Environnement ─────────────────────────────────────────────────────────────
+.env
+*.env.local
+*.env.production
+
+# ── Docker ───────────────────────────────────────────────────────────────────
+.dockerignore
+
+# ── Terraform ────────────────────────────────────────────────────────────────
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/tfplan
+**/crash.log
+**/override.tf
+**/override.tf.json
+**/terraform.tfvars
+**/terraform.tfvars.json
+
+# ── IDE ──────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

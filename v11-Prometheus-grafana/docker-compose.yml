@@ -1,0 +1,59 @@
+services:
+
+  # ── MongoDB ────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: portfolio-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── Backend Express (port 3001) ────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: dev
+    container_name: portfolio-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGO_URI=mongodb://mongo:27017/portfolio
+      - NODE_ENV=development
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mongo
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── Frontend React / Vite (port 8080) ──────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    container_name: portfolio-frontend
+    ports:
+      - "8080:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    depends_on:
+      - backend
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+
+networks:
+  portfolio-network:
+    name: portfolio-network
+    driver: bridge
