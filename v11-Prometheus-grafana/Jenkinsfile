@@ -54,6 +54,14 @@ pipeline {
             steps {
                 echo "=== Verification du Quality Gate SonarQube ==="
                 echo "Dashboard : ${SONAR_HOST_URL}/dashboard?id=${SONAR_PROJECT_KEY}"
+                script {
+                    def status = bat(script: "curl -s -u admin:aws123@Sia12 \"http://localhost:9000/api/qualitygates/project_status?projectKey=%SONAR_PROJECT_KEY%\"", returnStdout: true).trim()
+                    if (status.contains('"status":"ERROR"')) {
+                        echo "⚠️ Quality Gate FAILED - voir dashboard SonarQube"
+                    } else {
+                        echo "✅ Quality Gate PASSED"
+                    }
+                }
             }
         }
 
