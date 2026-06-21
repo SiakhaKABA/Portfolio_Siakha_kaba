@@ -1,0 +1,270 @@
+groups:
+  # ── Alertes Backend Application ────────────────────────
+  - name: backend_alerts
+    rules:
+      - alert: BackendDown
+        expr: up{job="portfolio-backend"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend Portfolio est DOWN"
+          description: "Le backend ne repond plus depuis 30 secondes."
+
+      - alert: HighErrorRate
+        expr: sum(rate(portfolio_backend_http_requests_total{status_code=~"5.."}[5m])) / sum(rate(portfolio_backend_http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Taux d'erreur HTTP superieur a 5%"
+          description: "Le taux d'erreur 5xx est a {{ $value | humanizePercentage }}."
+
+      - alert: HighLatencyP95
+        expr: histogram_quantile(0.95, sum(rate(portfolio_backend_http_request_duration_seconds_bucket[5m])) by (le)) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Latence P95 superieure a 2s"
+          description: "La latence P95 est a {{ $value }}s."
+
+      - alert: HighLatencyP99
+        expr: histogram_quantile(0.99, sum(rate(portfolio_backend_http_request_duration_seconds_bucket[5m])) by (le)) > 5
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Latence P99 superieure a 5s"
+          description: "La latence P99 est a {{ $value }}s."
+
+      - alert: TooManyRequests
+        expr: sum(rate(portfolio_backend_http_requests_total[1m])) > 100
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Taux de requetes anormalement eleve"
+          description: "Plus de 100 req/s depuis 2 minutes."
+
+      - alert: HighActiveConnections
+        expr: portfolio_backend_http_active_connections > 50
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Trop de connexions actives simultanees"
+          description: "{{ $value }} connexions actives."
+
+      - alert: ApplicationErrors
+        expr: rate(portfolio_backend_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Erreurs applicatives non gerees detectees"
+          description: "{{ $value }} erreurs/s depuis 2 minutes."
+
+      - alert: BackendRestarted
+        expr: changes(portfolio_backend_uptime_seconds[5m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Le backend a redemarré"
+          description: "Un redemarrage du backend a ete detecte."
+
+  # ── Alertes Authentification ───────────────────────────
+  - name: auth_alerts
+    rules:
+      - alert: BruteForceDetected
+        expr: portfolio_backend_auth_failed_consecutive > 5
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tentative de brute-force detectee"
+          description: "{{ $value }} echecs d'authentification consecutifs."
+
+      - alert: HighAuthFailureRate
+        expr: rate(portfolio_backend_auth_attempts_total{status="failure"}[5m]) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Taux eleve d'echecs d'authentification"
+          description: "Plus de 0.5 echecs/s depuis 2 minutes."
+
+      - alert: NoSuccessfulAuth
+        expr: rate(portfolio_backend_auth_attempts_total{status="success"}[1h]) == 0 and rate(portfolio_backend_auth_attempts_total{status="failure"}[1h]) > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Aucune authentification reussie mais des echecs"
+          description: "Des tentatives echouent sans aucun succes depuis 10min."
+
+  # ── Alertes MongoDB ────────────────────────────────────
+  - name: mongodb_alerts
+    rules:
+      - alert: MongoDBDown
+        expr: portfolio_backend_mongo_connection_state != 1
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Connexion MongoDB perdue"
+          description: "Etat de connexion MongoDB: {{ $value }}."
+
+      - alert: MongoDBSlowQueries
+        expr: histogram_quantile(0.95, sum(rate(portfolio_backend_mongo_operation_duration_seconds_bucket[5m])) by (le)) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Requetes MongoDB lentes (P95 > 1s)"
+          description: "La latence P95 MongoDB est a {{ $value }}s."
+
+      - alert: MongoDBHighOperationRate
+        expr: sum(rate(portfolio_backend_mongo_operations_total[1m])) > 200
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Taux d'operations MongoDB eleve"
+          description: "{{ $value }} ops/s."
+
+      - alert: MongoDBExporterDown
+        expr: up{job="mongodb"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "MongoDB Exporter est DOWN"
+          description: "Impossible de collecter les metriques MongoDB."
+
+  # ── Alertes Ressources Systeme ─────────────────────────
+  - name: system_alerts
+    rules:
+      - alert: HighCPUUsage
+        expr: rate(portfolio_backend_process_cpu_user_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Utilisation CPU elevee (Backend)"
+          description: "CPU a {{ $value }}%."
+
+      - alert: HighMemoryUsage
+        expr: portfolio_backend_process_resident_memory_bytes > 512 * 1024 * 1024
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Utilisation memoire elevee (> 512MB)"
+          description: "RSS a {{ $value | humanize1024 }}B."
+
+      - alert: MemoryLeakSuspected
+        expr: deriv(portfolio_backend_process_resident_memory_bytes[30m]) > 1048576
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Fuite memoire suspectee"
+          description: "La memoire augmente de {{ $value | humanize }}B/s."
+
+      - alert: HighEventLoopLag
+        expr: portfolio_backend_nodejs_eventloop_lag_p99_seconds > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Event Loop Lag eleve (P99 > 500ms)"
+          description: "Event loop lag a {{ $value }}s."
+
+      - alert: NodeExporterDown
+        expr: up{job="node-exporter"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node Exporter est DOWN"
+          description: "Metriques systeme indisponibles."
+
+      - alert: HighDiskUsage
+        expr: (1 - node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disque presque plein (> 85%)"
+          description: "Utilisation disque a {{ $value }}%."
+
+      - alert: HighSystemMemory
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Memoire systeme critique (> 90%)"
+          description: "Utilisation RAM a {{ $value }}%."
+
+  # ── Alertes Conteneurs (cAdvisor) ─────────────────────
+  - name: container_alerts
+    rules:
+      - alert: ContainerDown
+        expr: absent(container_last_seen{name=~"portfolio-.*"})
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Un conteneur portfolio est arrete"
+          description: "Conteneur non detecte depuis 30s."
+
+      - alert: ContainerHighCPU
+        expr: rate(container_cpu_usage_seconds_total{name=~"portfolio-.*"}[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Conteneur {{ $labels.name }} - CPU > 80%"
+          description: "CPU a {{ $value }}%."
+
+      - alert: ContainerHighMemory
+        expr: container_memory_usage_bytes{name=~"portfolio-.*"} / container_spec_memory_limit_bytes{name=~"portfolio-.*"} * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Conteneur {{ $labels.name }} - Memoire > 85%"
+          description: "Memoire a {{ $value }}%."
+
+      - alert: CAdvisorDown
+        expr: up{job="cadvisor"} == 0
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "cAdvisor est DOWN"
+          description: "Metriques conteneurs indisponibles."
+
+  # ── Alertes Monitoring Stack ───────────────────────────
+  - name: monitoring_alerts
+    rules:
+      - alert: PrometheusTargetDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Target {{ $labels.job }} est DOWN"
+          description: "{{ $labels.instance }} ne repond plus."
+
+      - alert: AlertmanagerDown
+        expr: up{job="alertmanager"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Alertmanager est DOWN"
+          description: "Les notifications d'alertes ne seront pas envoyees."
