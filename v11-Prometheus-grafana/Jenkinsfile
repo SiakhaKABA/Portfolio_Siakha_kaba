@@ -37,9 +37,8 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo "=== Analyse de la qualite du code avec SonarQube ==="
-                dir('v11-Prometheus-grafana') {
-                    bat 'if exist ".scannerwork" rmdir /s /q ".scannerwork"'
-                }
+                // Supprimer TOUS les .scannerwork du workspace pour eviter stale task IDs
+                bat 'for /d /r "%WORKSPACE%" %%d in (.scannerwork) do if exist "%%d" rmdir /s /q "%%d"'
                 withSonarQubeEnv(credentialsId: 'sonarqube-token', installationName: 'SonarQube') {
                     dir('v11-Prometheus-grafana') {
                         bat '''"%SONAR_SCANNER%" ^
