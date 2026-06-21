@@ -38,13 +38,13 @@ pipeline {
             steps {
                 echo "=== Analyse de la qualite du code avec SonarQube ==="
                 dir('v11-Prometheus-grafana') {
-                    withSonarQubeEnv('SonarQube') {
-                        bat '''"%SONAR_SCANNER%" ^
-                            -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
-                            -Dsonar.sources=backend,frontend/src ^
-                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
-                            -Dsonar.sourceEncoding=UTF-8'''
-                    }
+                    bat '''"%SONAR_SCANNER%" ^
+                        -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
+                        -Dsonar.sources=backend,frontend/src ^
+                        -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/** ^
+                        -Dsonar.sourceEncoding=UTF-8 ^
+                        -Dsonar.host.url=%SONAR_HOST_URL% ^
+                        -Dsonar.token=sqp_3fe46f2794f42000d10c3126669f12798b41eb46'''
                 }
                 echo "Analyse SonarQube terminee"
             }
