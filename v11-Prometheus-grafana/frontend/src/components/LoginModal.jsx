@@ -23,8 +23,9 @@ export default function LoginModal({ onLogin, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center modal-overlay bg-slate-900/70 px-4" onClick={onClose}>
-      <div className={`card p-6 sm:p-8 w-full max-w-sm animate-scale-in ${shaking ? 'animate-shake' : ''}`} onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center modal-overlay bg-slate-900/70 px-4">
+      <button type="button" className="absolute inset-0 w-full h-full cursor-default" onClick={onClose} aria-label="Fermer" />
+      <div className={`card p-6 sm:p-8 w-full max-w-sm animate-scale-in relative ${shaking ? 'animate-shake' : ''}`}>
         <div className="flex justify-center mb-5">
           <div className="w-14 h-14 rounded-2xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center">
             <i className="fas fa-lock text-teal-400 text-xl" />

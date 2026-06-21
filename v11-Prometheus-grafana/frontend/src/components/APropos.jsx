@@ -305,8 +305,9 @@ function ItemCard({ item, section, c, tabCfg, isAdmin, onEdit, onDelete, idx }) 
 
 function CrudModal({ mode, tabCfg, c, fields, form, saving, onChange, onSubmit, onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-slate-900/70 animate-fade-in" onClick={e => { if (e.target === e.currentTarget) onClose() }}>
-      <div className="card w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-slate-900/70 animate-fade-in">
+      <button type="button" className="absolute inset-0 w-full h-full cursor-default" onClick={onClose} aria-label="Fermer" />
+      <div className="card w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in relative">
         <div className="flex items-center justify-between p-5 border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center border ${c.badge}`}>
@@ -350,8 +351,9 @@ function CrudModal({ mode, tabCfg, c, fields, form, saving, onChange, onSubmit, 
 
 function ConfirmModal({ onConfirm, onCancel }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-slate-900/70 animate-fade-in" onClick={e => { if (e.target === e.currentTarget) onCancel() }}>
-      <div className="card w-full max-w-sm p-6 animate-scale-in text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-slate-900/70 animate-fade-in">
+      <button type="button" className="absolute inset-0 w-full h-full cursor-default" onClick={onCancel} aria-label="Fermer" />
+      <div className="card w-full max-w-sm p-6 animate-scale-in text-center relative">
         <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-4">
           <i className="fas fa-trash text-red-400 text-lg" />
         </div>

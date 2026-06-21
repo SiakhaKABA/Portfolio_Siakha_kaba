@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
  * Middleware — vérifie le token JWT dans le header Authorization.
  * Usage : router.post('/', authMiddleware, ctrl.create)
  */
-module.exports = (req, res, next) => {
+module.exports = function authMiddleware(req, res, next) {
   const header = req.headers['authorization'] || ''
   const token  = header.startsWith('Bearer ') ? header.slice(7) : null
 

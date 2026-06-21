@@ -64,7 +64,7 @@ export default function App() {
           body:    JSON.stringify(projet),
         }
       )
-      if (!res.ok) throw new Error()
+      if (!res.ok) throw new Error('Échec sauvegarde')
       await fetchProjets()
       showToast(isEdit ? '✓ Projet modifié' : '✓ Projet ajouté')
       setPage('projets')
@@ -75,7 +75,7 @@ export default function App() {
   }, [authHeaders, fetchProjets, showToast])
 
   const handleDeleteProjet = useCallback(async (id) => {
-    if (!window.confirm('Supprimer ce projet ?')) return
+    if (!globalThis.confirm('Supprimer ce projet ?')) return
     try {
       await fetch(`${API}/projets/${id}`, {
         method: 'DELETE',

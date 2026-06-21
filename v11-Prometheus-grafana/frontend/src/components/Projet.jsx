@@ -1,5 +1,4 @@
-export default function Projet({ projet, index, isAdmin, onView, onEdit, onDelete }) {
-  const { image, libelle, categorie, github, rapport, technologies, description } = projet
+export default function Projet({ projet: { image, libelle, categorie, github, rapport, technologies, description }, index, isAdmin, onView, onEdit, onDelete }) {
   return (
     <article
       className="card overflow-hidden flex flex-col group hover:border-white/10 transition-all animate-slide-up"
