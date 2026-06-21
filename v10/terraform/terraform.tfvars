@@ -1,15 +1,9 @@
-# ── Configuration PortfolioSonar ─────────────────────────────────────────────
-# Ce fichier contient les valeurs non-sensibles.
-# Les secrets (admin_password_hash, jwt_secret) sont injectés
-# via des variables d'environnement TF_VAR_* dans le Jenkinsfile.
+# Variables Terraform pour le deploiement Portfolio
+# Ce fichier contient des secrets - NE PAS commiter
 
-kubeconfig_path    = "C:\\ProgramData\\Jenkins\\.jenkins\\.kube\\config"
-kube_context       = "docker-desktop"
-namespace          = "default"
-dockerhub_repo     = "siakhakaba19/portfolio"
-mongo_storage_size = "1Gi"
-frontend_node_port = 30080
+# Mot de passe: rien@Sia!
+admin_password_hash = "$2a$12$1sgcHGiPe09fo7oq2ooyieMBy7eHIZZI6MOtUAh.4lXfLbvG0FVH."
+jwt_secret          = "d8922a597209eb10271ff4622cc90ba01f071b2bc55d4f02d57cd5a925e1886043626206db821dcc53db4dd050ed833c"
 
-# Les tags d'image sont passés dynamiquement par Jenkins :
-# -var="backend_image_tag=${BUILD_NUMBER}"
-# -var="frontend_image_tag=${BUILD_NUMBER}"
+backend_image_tag  = "107"
+frontend_image_tag = "107"
