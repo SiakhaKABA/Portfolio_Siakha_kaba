@@ -1,0 +1,575 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "uid": "cicd-pipeline",
+  "title": "CI/CD Pipeline - Jenkins, SonarQube, GitHub, Terraform, Kubernetes",
+  "tags": ["cicd", "jenkins", "sonarqube", "github", "kubernetes", "terraform"],
+  "panels": [
+    {
+      "id": 100,
+      "title": "--- JENKINS ---",
+      "type": "text",
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 0 },
+      "options": { "content": "## Jenkins CI", "mode": "markdown" }
+    },
+    {
+      "id": 1,
+      "title": "Jenkins Status",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 2 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "up{job=\"jenkins\"}",
+          "legendFormat": "Status"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}],
+          "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "title": "Builds en file d'attente",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 2 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "jenkins_queue_size_value",
+          "legendFormat": "Queue"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 3 }, { "color": "red", "value": 5 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "title": "Executors actifs",
+      "type": "gauge",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 2 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "jenkins_executor_in_use_value",
+          "legendFormat": "In Use"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "max": 10,
+          "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 7 }, { "color": "red", "value": 9 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "title": "Builds reussis vs echoues",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 2 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(jenkins_runs_success_total[1h]))",
+          "legendFormat": "Succes"
+        },
+        {
+          "expr": "sum(increase(jenkins_runs_failure_total[1h]))",
+          "legendFormat": "Echecs"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "Succes"}, "properties": [{"id": "color", "value": {"fixedColor": "green", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Echecs"}, "properties": [{"id": "color", "value": {"fixedColor": "red", "mode": "fixed"}}]}
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "title": "Duree moyenne des builds",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "jenkins_runs_total_duration_milliseconds_summary{quantile=\"0.5\"} / 1000",
+          "legendFormat": "P50 (s)"
+        },
+        {
+          "expr": "jenkins_runs_total_duration_milliseconds_summary{quantile=\"0.95\"} / 1000",
+          "legendFormat": "P95 (s)"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    },
+    {
+      "id": 101,
+      "title": "--- SONARQUBE ---",
+      "type": "text",
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 14 },
+      "options": { "content": "## SonarQube - Qualite du Code", "mode": "markdown" }
+    },
+    {
+      "id": 6,
+      "title": "SonarQube Status",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "up{job=\"sonarqube\"}",
+          "legendFormat": "Status"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}],
+          "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 7,
+      "title": "SonarQube HTTP Probe",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "probe_success{job=\"blackbox-http\", instance=~\".*9000.*\"}",
+          "legendFormat": "Health"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "FAIL", "color": "red"}, "1": {"text": "OK", "color": "green"}}}],
+          "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 8,
+      "title": "SonarQube Probe Duration",
+      "type": "gauge",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "probe_duration_seconds{job=\"blackbox-http\", instance=~\".*9000.*\"}",
+          "legendFormat": "Duration"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "max": 10,
+          "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 3 }, { "color": "red", "value": 8 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 9,
+      "title": "SonarQube CE Tasks en attente",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sonarqube_ce_queue_pending",
+          "legendFormat": "Pending"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 5 }, { "color": "red", "value": 10 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 102,
+      "title": "--- GITHUB ---",
+      "type": "text",
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 20 },
+      "options": { "content": "## GitHub Repository", "mode": "markdown" }
+    },
+    {
+      "id": 10,
+      "title": "GitHub Exporter Status",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 22 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "up{job=\"github\"}",
+          "legendFormat": "Status"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}],
+          "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 11,
+      "title": "API Rate Limit restant",
+      "type": "gauge",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 22 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "github_rate_remaining",
+          "legendFormat": "Remaining"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "max": 5000,
+          "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "yellow", "value": 500 }, { "color": "green", "value": 1000 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 12,
+      "title": "Stars du repo",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 22 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "github_repo_stars{repo=\"Portfolio_Siakha_KABA\"}",
+          "legendFormat": "Stars"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "blue", "value": null }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 13,
+      "title": "Forks du repo",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 22 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "github_repo_forks{repo=\"Portfolio_Siakha_KABA\"}",
+          "legendFormat": "Forks"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "purple", "value": null }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 14,
+      "title": "Open Issues",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 22 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "github_repo_open_issues{repo=\"Portfolio_Siakha_KABA\"}",
+          "legendFormat": "Issues"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 5 }, { "color": "red", "value": 10 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 15,
+      "title": "Pull Requests ouvertes",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 22 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "github_repo_pull_requests{repo=\"Portfolio_Siakha_KABA\"}",
+          "legendFormat": "PRs"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 3 }, { "color": "red", "value": 5 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 103,
+      "title": "--- KUBERNETES ---",
+      "type": "text",
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 26 },
+      "options": { "content": "## Kubernetes Cluster", "mode": "markdown" }
+    },
+    {
+      "id": 16,
+      "title": "Kube-State-Metrics Status",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 28 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "up{job=\"kube-state-metrics\"}",
+          "legendFormat": "Status"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}],
+          "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 17,
+      "title": "Pods Running",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 28 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "count(kube_pod_status_phase{namespace=\"default\", phase=\"Running\"} == 1)",
+          "legendFormat": "Running"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 18,
+      "title": "Pods Non-Ready",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 28 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "count(kube_pod_status_ready{namespace=\"default\", condition=\"true\"} == 0) or vector(0)",
+          "legendFormat": "Not Ready"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 19,
+      "title": "Restarts de Pods (15m)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 28 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(kube_pod_container_status_restarts_total{namespace=\"default\"}[15m]))",
+          "legendFormat": "Restarts"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 3 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 20,
+      "title": "Deployments (ready/total)",
+      "type": "table",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 32 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "kube_deployment_status_ready_replicas{namespace=\"default\"}",
+          "legendFormat": "{{ deployment }} ready",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "expr": "kube_deployment_spec_replicas{namespace=\"default\"}",
+          "legendFormat": "{{ deployment }} desired",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": { "defaults": {}, "overrides": [] }
+    },
+    {
+      "id": 21,
+      "title": "CPU par Pod",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 32 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"default\", pod=~\"backend.*|frontend.*|mongo.*\"}[5m])) by (pod)",
+          "legendFormat": "{{ pod }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] }
+    },
+    {
+      "id": 22,
+      "title": "Memoire par Pod",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 38 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"default\", pod=~\"backend.*|frontend.*|mongo.*\"}) by (pod)",
+          "legendFormat": "{{ pod }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] }
+    },
+    {
+      "id": 23,
+      "title": "Network I/O par Pod",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 38 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(container_network_receive_bytes_total{namespace=\"default\"}[5m])) by (pod)",
+          "legendFormat": "{{ pod }} RX"
+        },
+        {
+          "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"default\"}[5m])) by (pod)",
+          "legendFormat": "{{ pod }} TX"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
+    },
+    {
+      "id": 104,
+      "title": "--- TERRAFORM / INFRASTRUCTURE ---",
+      "type": "text",
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 44 },
+      "options": { "content": "## Terraform & Health Checks Infrastructure", "mode": "markdown" }
+    },
+    {
+      "id": 24,
+      "title": "Services Infrastructure - Health",
+      "type": "table",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 46 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "probe_success{job=\"blackbox-http\"}",
+          "legendFormat": "{{ instance }}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 25,
+      "title": "Probe Duration (latence services)",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 46 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "probe_duration_seconds{job=\"blackbox-http\"}",
+          "legendFormat": "{{ instance }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    },
+    {
+      "id": 26,
+      "title": "Deployments disponibles apres Terraform Apply",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 52 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "count(kube_deployment_status_available_replicas{namespace=\"default\"} > 0)",
+          "legendFormat": "Available"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 27,
+      "title": "Jenkins Terraform Jobs",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 6, "y": 52 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "jenkins_runs_success_total{jenkins_job=~\".*[Pp]ortfolio.*\"}",
+          "legendFormat": "{{ jenkins_job }} - Succes"
+        },
+        {
+          "expr": "jenkins_runs_failure_total{jenkins_job=~\".*[Pp]ortfolio.*\"}",
+          "legendFormat": "{{ jenkins_job }} - Echecs"
+        }
+      ],
+      "fieldConfig": { "defaults": {}, "overrides": [] }
+    }
+  ],
+  "schemaVersion": 39,
+  "templating": {
+    "list": [
+      {
+        "name": "DS_PROMETHEUS",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": { "text": "prometheus", "value": "prometheus" }
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "refresh": "10s"
+}

@@ -1,0 +1,169 @@
+services:
+
+  # ── Prometheus (port 9090) ─────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: portfolio-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml
+      - ./prometheus/alerts-cicd.yml:/etc/prometheus/alerts-cicd.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── Grafana (port 3006) ────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: portfolio-grafana
+    ports:
+      - "3006:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── Alertmanager (port 9093) ───────────────────────────
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: portfolio-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── Node Exporter (port 9100) ──────────────────────────
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: portfolio-node-exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── MongoDB Exporter (port 9216) ───────────────────────
+  mongodb-exporter:
+    image: percona/mongodb_exporter:0.40
+    container_name: portfolio-mongodb-exporter
+    ports:
+      - "9216:9216"
+    environment:
+      - MONGODB_URI=mongodb://portfolio-mongodb:27017
+    command:
+      - '--mongodb.uri=mongodb://portfolio-mongodb:27017'
+      - '--collect-all'
+      - '--compatible-mode'
+    depends_on:
+      - prometheus
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── cAdvisor (port 8082) ───────────────────────────────
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: portfolio-cadvisor
+    ports:
+      - "8082:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── GitHub Exporter (port 9171) ────────────────────────
+  github-exporter:
+    image: githubexporter/github-exporter:latest
+    container_name: portfolio-github-exporter
+    ports:
+      - "9171:9171"
+    environment:
+      - REPOS=Siakha-KABA/Portfolio_Siakha_KABA
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── Blackbox Exporter (port 9115) ──────────────────────
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: portfolio-blackbox-exporter
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox/blackbox.yml:/config/blackbox.yml
+    command:
+      - '--config.file=/config/blackbox.yml'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+  # ── Kube State Metrics (port 8081) ─────────────────────
+  kube-state-metrics:
+    image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.10.1
+    container_name: portfolio-kube-state-metrics
+    ports:
+      - "8081:8080"
+    volumes:
+      - ${KUBECONFIG:-~/.kube/config}:/root/.kube/config:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
+    name: portfolio-prometheus-data
+  grafana_data:
+    name: portfolio-grafana-data
+  alertmanager_data:
+    name: portfolio-alertmanager-data
+
+networks:
+  portfolio-network:
+    external: true

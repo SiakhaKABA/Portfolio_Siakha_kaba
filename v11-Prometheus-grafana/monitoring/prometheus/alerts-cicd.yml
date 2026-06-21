@@ -1,0 +1,222 @@
+groups:
+  # ── Alertes Jenkins ────────────────────────────────────────
+  - name: jenkins_alerts
+    rules:
+      - alert: JenkinsDown
+        expr: up{job="jenkins"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Jenkins est DOWN"
+          description: "Le serveur Jenkins ne repond plus depuis 1 minute."
+
+      - alert: JenkinsJobFailure
+        expr: jenkins_runs_failure_total > 0
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Echec de build Jenkins detecte"
+          description: "Un job Jenkins a echoue: {{ $labels.jenkins_job }}."
+
+      - alert: JenkinsHighQueueLength
+        expr: jenkins_queue_size_value > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "File d'attente Jenkins elevee"
+          description: "{{ $value }} jobs en attente depuis 5 minutes."
+
+      - alert: JenkinsNodeOffline
+        expr: jenkins_node_offline_value > 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Un agent Jenkins est hors-ligne"
+          description: "{{ $value }} agent(s) Jenkins deconnecte(s)."
+
+      - alert: JenkinsBuildDurationHigh
+        expr: jenkins_runs_total_duration_milliseconds_summary{quantile="0.95"} > 600000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Builds Jenkins lents (P95 > 10min)"
+          description: "La duree P95 des builds est a {{ $value }}ms."
+
+  # ── Alertes SonarQube ──────────────────────────────────────
+  - name: sonarqube_alerts
+    rules:
+      - alert: SonarQubeDown
+        expr: up{job="sonarqube"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SonarQube est DOWN"
+          description: "Le serveur SonarQube ne repond plus depuis 1 minute."
+
+      - alert: SonarQubeHealthCheck
+        expr: probe_success{job="blackbox-http", instance=~".*9000.*"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SonarQube health check echoue"
+          description: "SonarQube ne repond plus aux health checks HTTP."
+
+      - alert: SonarQubeHighMemory
+        expr: sonarqube_jvm_memory_heap_used_bytes / sonarqube_jvm_memory_heap_max_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "SonarQube - Heap JVM > 85%"
+          description: "Utilisation heap JVM a {{ $value }}%."
+
+      - alert: SonarQubeCEQueueHigh
+        expr: sonarqube_ce_queue_pending > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "File d'attente Compute Engine SonarQube elevee"
+          description: "{{ $value }} taches en attente d'analyse."
+
+  # ── Alertes GitHub ─────────────────────────────────────────
+  - name: github_alerts
+    rules:
+      - alert: GitHubExporterDown
+        expr: up{job="github"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GitHub Exporter est DOWN"
+          description: "Impossible de collecter les metriques GitHub."
+
+      - alert: GitHubRateLimitLow
+        expr: github_rate_remaining < 100
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Rate limit GitHub API bientot atteint"
+          description: "Il reste {{ $value }} appels API GitHub disponibles."
+
+      - alert: GitHubRepoUnreachable
+        expr: probe_success{job="blackbox-http", instance=~".*github.*"} == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GitHub inaccessible"
+          description: "Impossible de joindre GitHub depuis 5 minutes."
+
+  # ── Alertes Kubernetes ─────────────────────────────────────
+  - name: kubernetes_alerts
+    rules:
+      - alert: KubeStateMetricsDown
+        expr: up{job="kube-state-metrics"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "kube-state-metrics est DOWN"
+          description: "Metriques Kubernetes indisponibles."
+
+      - alert: KubePodCrashLooping
+        expr: rate(kube_pod_container_status_restarts_total{namespace="default"}[15m]) * 60 * 15 > 3
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Pod {{ $labels.pod }} en CrashLoopBackOff"
+          description: "Le pod a redemarré {{ $value }} fois en 15 minutes."
+
+      - alert: KubePodNotReady
+        expr: kube_pod_status_ready{namespace="default", condition="true"} == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pod {{ $labels.pod }} non pret"
+          description: "Le pod n'est pas Ready depuis 5 minutes."
+
+      - alert: KubeDeploymentReplicasMismatch
+        expr: kube_deployment_spec_replicas{namespace="default"} != kube_deployment_status_ready_replicas{namespace="default"}
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Deployment {{ $labels.deployment }} - replicas manquants"
+          description: "Attendu {{ $value }} replicas, mais tous ne sont pas Ready."
+
+      - alert: KubeNodeNotReady
+        expr: kube_node_status_condition{condition="Ready", status="true"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node Kubernetes {{ $labels.node }} non pret"
+          description: "Le node n'est pas dans l'etat Ready."
+
+      - alert: KubeNodeHighCPU
+        expr: (1 - avg by(node) (rate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Node {{ $labels.node }} - CPU > 85%"
+          description: "Utilisation CPU du node a {{ $value }}%."
+
+      - alert: KubeNodeHighMemory
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node {{ $labels.node }} - Memoire > 90%"
+          description: "Utilisation memoire du node a {{ $value }}%."
+
+      - alert: KubePVCAlmostFull
+        expr: kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PVC {{ $labels.persistentvolumeclaim }} presque plein"
+          description: "Utilisation a {{ $value }}%."
+
+  # ── Alertes Terraform / Infrastructure ─────────────────────
+  - name: terraform_alerts
+    rules:
+      - alert: TerraformDeploymentFailed
+        expr: jenkins_runs_failure_total{jenkins_job=~".*[Tt]erraform.*"} > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Deploiement Terraform echoue"
+          description: "Un job Terraform a echoue dans Jenkins."
+
+      - alert: KubeDeploymentUnavailable
+        expr: kube_deployment_status_available_replicas{namespace="default"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Deployment {{ $labels.deployment }} indisponible"
+          description: "Aucun replica disponible apres deploiement Terraform."
+
+      - alert: InfraServiceDown
+        expr: probe_success{job="blackbox-http"} == 0
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.instance }} indisponible"
+          description: "Le service ne repond pas aux health checks depuis 3 minutes."
