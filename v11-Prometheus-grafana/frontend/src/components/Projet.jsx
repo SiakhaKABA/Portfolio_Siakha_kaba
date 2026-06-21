@@ -1,4 +1,7 @@
-export default function Projet({ projet: { image, libelle, categorie, github, rapport, technologies, description }, index, isAdmin, onView, onEdit, onDelete }) {
+import PropTypes from 'prop-types'
+
+export default function Projet({ projet, index, isAdmin, onView, onEdit, onDelete }) {
+  const { image, libelle, categorie, github, rapport, technologies, description } = projet
   return (
     <article
       className="card overflow-hidden flex flex-col group hover:border-white/10 transition-all animate-slide-up"
@@ -73,4 +76,21 @@ export default function Projet({ projet: { image, libelle, categorie, github, ra
       </div>
     </article>
   )
+}
+
+Projet.propTypes = {
+  projet: PropTypes.shape({
+    image: PropTypes.string,
+    libelle: PropTypes.string,
+    categorie: PropTypes.string,
+    github: PropTypes.string,
+    rapport: PropTypes.string,
+    technologies: PropTypes.arrayOf(PropTypes.string),
+    description: PropTypes.string,
+  }).isRequired,
+  index: PropTypes.number.isRequired,
+  isAdmin: PropTypes.bool,
+  onView: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 }
