@@ -9,8 +9,9 @@ pipeline {
         SONAR_HOST_URL    = 'http://localhost:9000'
         SONAR_PROJECT_KEY = 'Portfolio-Siakha-KABA'
         KUBECONFIG        = "C:\\ProgramData\\Jenkins\\.jenkins\\.kube\\config"
+        KUBECONFIG_SRC    = "C:\\Users\\Soni-info Tech\\.kube\\config"
         K8S_NAMESPACE     = 'default'
-        TF_DIR            = "v10\\terraform"
+        TF_DIR            = "v11-Prometheus-grafana\\terraform"
         TF_STATE_DIR      = "C:\\ProgramData\\Jenkins\\.jenkins\\terraform-states\\portfolio"
     }
 
@@ -24,17 +25,19 @@ pipeline {
 
         stage('Preparation env') {
             steps {
-                // Copie le .env secret depuis l'emplacement sécurisé
-                bat 'copy "C:\\secrets\\backend.env" "%WORKSPACE%\\v10\\backend\\.env"'
-                // Crée le dossier de state Terraform si absent
+                bat 'copy "C:\\secrets\\backend.env" "%WORKSPACE%\\v11-Prometheus-grafana\\backend\\.env"'
                 bat 'if not exist "%TF_STATE_DIR%" mkdir "%TF_STATE_DIR%"'
+                // Synchronise le kubeconfig Docker Desktop vers Jenkins
+                bat 'if not exist "C:\\ProgramData\\Jenkins\\.jenkins\\.kube" mkdir "C:\\ProgramData\\Jenkins\\.jenkins\\.kube"'
+                bat 'copy /Y "%KUBECONFIG_SRC%" "%KUBECONFIG%"'
+                bat 'kubectl --kubeconfig "%KUBECONFIG%" cluster-info'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 echo "=== Analyse de la qualite du code avec SonarQube ==="
-                dir('v10') {
+                dir('v11-Prometheus-grafana') {
                     withSonarQubeEnv('SonarQube') {
                         bat '''"%SONAR_SCANNER%" ^
                             -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
@@ -59,13 +62,13 @@ pipeline {
                 stage('Build Backend') {
                     steps {
                         echo "=== Construction image Docker Backend (target prod) ==="
-                        bat "docker build -t %DOCKERHUB_REPO%:backend-%BUILD_TAG% -t %DOCKERHUB_REPO%:backend-latest v10/backend --target prod"
+                        bat "docker build -t %DOCKERHUB_REPO%:backend-%BUILD_TAG% -t %DOCKERHUB_REPO%:backend-latest v11-Prometheus-grafana/backend --target prod"
                     }
                 }
                 stage('Build Frontend') {
                     steps {
                         echo "=== Construction image Docker Frontend (target prod) ==="
-                        bat "docker build -t %DOCKERHUB_REPO%:frontend-%BUILD_TAG% -t %DOCKERHUB_REPO%:frontend-latest v10/frontend --target prod"
+                        bat "docker build -t %DOCKERHUB_REPO%:frontend-%BUILD_TAG% -t %DOCKERHUB_REPO%:frontend-latest v11-Prometheus-grafana/frontend --target prod"
                     }
                 }
             }
