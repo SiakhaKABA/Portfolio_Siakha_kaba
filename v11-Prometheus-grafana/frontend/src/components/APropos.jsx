@@ -305,7 +305,7 @@ function ItemCard({ item, section, c, tabCfg, isAdmin, onEdit, onDelete, idx }) 
 
 function CrudModal({ mode, tabCfg, c, fields, form, saving, onChange, onSubmit, onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-slate-900/70 animate-fade-in" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-slate-900/70 animate-fade-in" role="button" tabIndex={0} onClick={e => e.target === e.currentTarget && onClose()} onKeyDown={e => e.key === 'Escape' && onClose()}>
       <div className="card w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in">
         <div className="flex items-center justify-between p-5 border-b border-white/5">
           <div className="flex items-center gap-3">
@@ -350,7 +350,7 @@ function CrudModal({ mode, tabCfg, c, fields, form, saving, onChange, onSubmit, 
 
 function ConfirmModal({ onConfirm, onCancel }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-slate-900/70 animate-fade-in" onClick={e => e.target === e.currentTarget && onCancel()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-slate-900/70 animate-fade-in" role="button" tabIndex={0} onClick={e => e.target === e.currentTarget && onCancel()} onKeyDown={e => e.key === 'Escape' && onCancel()}>
       <div className="card w-full max-w-sm p-6 animate-scale-in text-center">
         <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-4">
           <i className="fas fa-trash text-red-400 text-lg" />

@@ -61,8 +61,8 @@ export default function Accueil({ onVoirProjets, onContact, onAPropos }) {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 max-w-lg mx-auto md:mx-0">
-            {skills.map((s, i) => (
-              <div key={i}
+            {skills.map((s) => (
+              <div key={s.label}
                 className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 bg-slate-800/60 border border-white/5 rounded-xl text-xs sm:text-sm text-slate-300 hover:border-teal-400/30 hover:bg-slate-700/60 transition-all">
                 <span className="text-base sm:text-xl flex-shrink-0">{s.icon}</span>
                 <span className="font-medium leading-tight">{s.label}</span>

@@ -11,6 +11,7 @@ COPY middleware ./middleware
 COPY models ./models
 COPY routes ./routes
 EXPOSE 3001
+USER node
 CMD ["nodemon", "app.js"]
 
 FROM node:20-alpine AS prod
@@ -25,4 +26,5 @@ COPY middleware ./middleware
 COPY models ./models
 COPY routes ./routes
 EXPOSE 3001
+USER node
 CMD ["node", "app.js"]

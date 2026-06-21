@@ -53,7 +53,7 @@ export default function App() {
   useEffect(() => { fetchProjets() }, [fetchProjets])
 
   // ── CRUD Projets ──────────────────────────────────────
-  const handleSubmitProjet = async (projet) => {
+  const handleSubmitProjet = useCallback(async (projet) => {
     const isEdit = Boolean(projet._id)
     try {
       const res = await fetch(
@@ -72,9 +72,9 @@ export default function App() {
     } catch {
       showToast('Erreur lors de la sauvegarde', 'error')
     }
-  }
+  }, [authHeaders, fetchProjets, showToast])
 
-  const handleDeleteProjet = async (id) => {
+  const handleDeleteProjet = useCallback(async (id) => {
     if (!window.confirm('Supprimer ce projet ?')) return
     try {
       await fetch(`${API}/projets/${id}`, {
@@ -87,7 +87,7 @@ export default function App() {
     } catch {
       showToast('Erreur lors de la suppression', 'error')
     }
-  }
+  }, [authHeaders, fetchProjets, showToast, page])
 
   // ── Auth ──────────────────────────────────────────────
   const handleLogin = useCallback(async (password) => {

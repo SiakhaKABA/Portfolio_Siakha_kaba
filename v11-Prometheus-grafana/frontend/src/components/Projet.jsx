@@ -23,17 +23,18 @@ export default function Projet({ projet, index, isAdmin, onView, onEdit, onDelet
           </div>
         )}
 
-        {projet.github ? (
+        {projet.github && (
           <a href={projet.github} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
             className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-900/90 border border-white/10 hover:border-teal-400/40 text-xs font-mono text-slate-300 hover:text-teal-400 transition-all">
             <i className="fab fa-github" />GitHub
           </a>
-        ) : projet.rapport ? (
+        )}
+        {!projet.github && projet.rapport && (
           <a href={projet.rapport} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
             className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-900/90 border border-white/10 hover:border-red-400/40 text-xs font-mono text-slate-300 hover:text-red-400 transition-all">
             <i className="fas fa-file-pdf" />Rapport
           </a>
-        ) : null}
+        )}
       </div>
 
       {/* Contenu */}

@@ -169,7 +169,7 @@ function metricsMiddleware(req, res, next) {
   const start = process.hrtime.bigint()
   httpActiveConnections.inc()
 
-  const reqSize = parseInt(req.headers['content-length'] || '0', 10)
+  const reqSize = Number.parseInt(req.headers['content-length'] || '0', 10)
 
   res.on('finish', () => {
     httpActiveConnections.dec()
@@ -183,7 +183,7 @@ function metricsMiddleware(req, res, next) {
     if (reqSize > 0) {
       httpRequestSize.observe({ method: req.method, route }, reqSize)
     }
-    const resSize = parseInt(res.getHeader('content-length') || '0', 10)
+    const resSize = Number.parseInt(res.getHeader('content-length') || '0', 10)
     if (resSize > 0) {
       httpResponseSize.observe({ method: req.method, route }, resSize)
     }
