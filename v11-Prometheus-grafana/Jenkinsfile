@@ -181,13 +181,6 @@ pipeline {
             }
         }
 
-        stage('Seed MongoDB') {
-            steps {
-                echo "=== Synchronisation des donnees MongoDB local vers Kubernetes ==="
-                bat "call \"%WORKSPACE%\\v11-Prometheus-grafana\\scripts\\seed-k8s.bat\" %K8S_NAMESPACE%"
-            }
-        }
-
         stage('Verification') {
             steps {
                 echo "=== Etat du cluster ==="
