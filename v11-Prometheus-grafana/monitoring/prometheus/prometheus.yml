@@ -43,38 +43,87 @@ scrape_configs:
     static_configs:
       - targets: ['grafana:3000']
 
-  # ── Metrics Simulator (CI/CD) ─────────────────────────────
-  - job_name: 'cicd-simulator'
+  # ── CI/CD Simulator ──────────────────────────────────────
+  - job_name: 'jenkins'
+    metrics_path: /metrics
     static_configs:
       - targets: ['metrics-simulator:9999']
         labels:
-          instance: 'simulator'
+          instance: 'jenkins-local'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: '(up|jenkins_.*)'
+        action: keep
 
-  # ── Jenkins ──────────────────────────────────────────────
-  - job_name: 'jenkins'
+  - job_name: 'sonarqube'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['metrics-simulator:9999']
+        labels:
+          instance: 'sonarqube-local'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: '(up|sonarqube_.*)'
+        action: keep
+
+  - job_name: 'github'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['metrics-simulator:9999']
+        labels:
+          instance: 'github'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: '(up|github_.*)'
+        action: keep
+
+  - job_name: 'kube-state-metrics'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['metrics-simulator:9999']
+        labels:
+          instance: 'kubernetes'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: '(up|kube_.*)'
+        action: keep
+
+  - job_name: 'terraform'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['metrics-simulator:9999']
+        labels:
+          instance: 'terraform'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: '(up|terraform_.*)'
+        action: keep
+
+  - job_name: 'blackbox-http'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['metrics-simulator:9999']
+        labels:
+          instance: 'blackbox'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: '(up|probe_.*|pipeline_.*)'
+        action: keep
+
+  # ── Real services (backup, via host network) ─────────────
+  - job_name: 'jenkins-real'
     metrics_path: /prometheus/
     static_configs:
       - targets: ['host.docker.internal:8080']
         labels:
-          instance: 'jenkins-local'
+          instance: 'jenkins-host'
 
-  # ── SonarQube ────────────────────────────────────────────
-  - job_name: 'sonarqube'
+  - job_name: 'sonarqube-real'
     metrics_path: /api/monitoring/metrics
     static_configs:
       - targets: ['host.docker.internal:9000']
         labels:
-          instance: 'sonarqube-local'
-
-  # ── GitHub Exporter ──────────────────────────────────────
-  - job_name: 'github'
-    static_configs:
-      - targets: ['github-exporter:9171']
-
-  # ── Kubernetes ───────────────────────────────────────────
-  - job_name: 'kube-state-metrics'
-    static_configs:
-      - targets: ['kube-state-metrics:8080']
+          instance: 'sonarqube-host'
 
   - job_name: 'kubernetes-apiservers'
     scheme: https
@@ -85,21 +134,3 @@ scrape_configs:
       - targets: ['host.docker.internal:6443']
         labels:
           instance: 'k8s-local'
-
-  # ── Blackbox Exporter (health checks) ───────────────────
-  - job_name: 'blackbox-http'
-    metrics_path: /probe
-    params:
-      module: [http_2xx]
-    static_configs:
-      - targets:
-          - http://host.docker.internal:8080/login
-          - http://host.docker.internal:9000
-          - https://github.com/Siakha-KABA
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: blackbox-exporter:9115
